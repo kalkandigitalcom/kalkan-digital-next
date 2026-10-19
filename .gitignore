@@ -1,0 +1,15 @@
+node_modules
+.next
+dist-scripts
+uploads
+.env
+.env.local
+.env.*.local
+*.log
+coverage
+next-env.d.ts
+*.tsbuildinfo
+
+# Local archives and temporary files
+.archive/
+.DS_Store
