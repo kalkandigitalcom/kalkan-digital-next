@@ -1,15 +1,22 @@
 import { cn } from "@/lib/cn";
 
 /**
- * Kalkan Digital wordmark.
+ * Kalkan Digital logosu.
  *
- * The official logo file was not provided with the project. Until it is added,
- * a text wordmark following the brand rules is rendered ("Kalkan" white/navy,
- * "Digital" brand blue). To use the official artwork, put the files in
- * /public/brand/ and set LOGO_FILES below — no other code needs to change.
+ * Resmî logo: public/brand/logo.png (1680×330, şeffaf PNG). "Kalkan" beyaz,
+ * "Digital" mavi olduğu için koyu zeminlerde (onDark) doğrudan kullanılır.
+ * Açık zeminler (onLight) için aynı görselin "Kalkan" kısmı marka laciverti
+ * (#0B1F3A) yapılmış sürümü: public/brand/logo-on-light.png — marka kuralı
+ * ("Kalkan" beyaz/lacivert, "Digital" mavi) ile aynı.
+ * public/ klasörü sitenin köküne sunulur → yollar "/brand/..." biçimindedir.
+ * LOGO_FILES null yapılırsa metin wordmark'a geri dönülür.
  */
-const LOGO_FILES: { onDark: string; onLight: string; width: number; height: number } | null = null;
-// Example: { onDark: "/brand/kalkan-digital-dark.svg", onLight: "/brand/kalkan-digital-light.svg", width: 180, height: 40 }
+const LOGO_FILES: { onDark: string; onLight: string; width: number; height: number } | null = {
+  onDark: "/brand/logo.png",
+  onLight: "/brand/logo-on-light.png",
+  width: 1680,
+  height: 330,
+};
 
 export function Logo({
   variant = "onLight",
