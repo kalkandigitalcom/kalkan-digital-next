@@ -4,14 +4,15 @@ import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 import path from "node:path";
 import * as schema from "@/server/db/schema";
+import { assertSafeTestDatabaseUrl } from "./test-db-guard";
 
 export const hasTestDb = Boolean(process.env.TEST_DATABASE_URL);
 
 let client: ReturnType<typeof postgres> | null = null;
 
 export async function setupTestDb() {
-  const url = process.env.TEST_DATABASE_URL!;
-  if (!/test/i.test(url)) throw new Error("TEST_DATABASE_URL must point to a database whose name contains 'test'.");
+  // Re-checked here (also done in setup-env.ts) right before connecting and truncating.
+  const url = assertSafeTestDatabaseUrl(process.env.TEST_DATABASE_URL);
   client = postgres(url, { max: 2, onnotice: () => {} });
   const db = drizzle(client, { schema });
   await migrate(db, { migrationsFolder: path.resolve(import.meta.dirname, "../drizzle") });

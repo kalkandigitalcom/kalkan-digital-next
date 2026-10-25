@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   Settings,
+  Table2,
   Users,
   Wallet,
   X,
@@ -24,6 +25,7 @@ import { logoutAction } from "@/server/actions/auth";
 
 const NAV = [
   { href: "/admin/dashboard", label: "Genel bakış", icon: LayoutDashboard },
+  { href: "/admin/workspace", label: "Çalışma ekranı", icon: Table2 },
   { href: "/admin/customers", label: "Müşteriler", icon: Users },
   { href: "/admin/projects", label: "Projeler", icon: FolderKanban },
   { href: "/admin/transactions", label: "Gelir & gider", icon: Wallet },

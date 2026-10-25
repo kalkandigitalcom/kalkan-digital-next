@@ -15,8 +15,9 @@
  *
  * This module has no auth checks; callers (services) must authorise first.
  */
-import { and, eq, gte, lte, sql, type SQL } from "drizzle-orm";
+import { and, eq, gte, inArray, lte, sql, type SQL } from "drizzle-orm";
 import type { Database, Tx } from "@/server/db";
+import { qcol } from "@/server/db/qualified";
 import { financialCategories, financialTransactions as ft, projects, type Currency } from "@/server/db/schema";
 import { compareMoney, convertAmount, isZero, subMoney } from "@/lib/money";
 import { addDays, makeIso } from "@/lib/dates";
@@ -216,11 +217,14 @@ export async function receivablesAgeing(q: Q, base: Currency, today: string) {
  * otherwise only income recorded in the project's own currency is counted.
  */
 export function projectCollectedExpr(base: Currency) {
+  // Outer columns are always table-qualified (see qcol): a bare "id"/"currency" would bind to `t`.
+  const pid = qcol(projects.id);
+  const pcur = qcol(projects.currency);
   return sql<string>`(
-    select coalesce(sum(case when ${projects.currency} = ${base} then t.base_amount else t.amount end), 0)::text
+    select coalesce(sum(case when ${pcur} = ${base} then t.base_amount else t.amount end), 0)::text
     from financial_transactions t
-    where t.project_id = ${projects.id} and t.type = 'income' and t.status = 'completed'
-      and (${projects.currency} = ${base} or t.currency = ${projects.currency})
+    where t.project_id = ${pid} and t.type = 'income' and t.status = 'completed'
+      and (${pcur} = ${base} or t.currency = ${pcur})
   )`;
 }
 
@@ -259,3 +263,69 @@ export async function customerCashSummary(q: Q, base: Currency, customerId: stri
   return { collected: get("income", "completed"), receivable: get("income", "pending"), expense: get("expense", "completed") };
 }
 
+
+export interface CustomerIncomeTotals {
+  /** Collected income (income, completed), all time, base currency. */
+  collected: string;
+  /** Open receivable (income, pending), base currency. */
+  receivable: string;
+  receivableCount: number;
+  /** Part of the receivable whose due date (fallback: transaction date) is before `today`. */
+  overdue: string;
+  overdueCount: number;
+  /** Non-cancelled income in a foreign currency without an exchange rate (excluded from the sums above). */
+  missingRateCount: number;
+  /** The same, split by figure: collected / receivable / overdue (overdue ⊂ receivable). */
+  collectedMissingRate: number;
+  receivableMissingRate: number;
+  overdueMissingRate: number;
+}
+
+const ZERO_CUSTOMER_TOTALS: CustomerIncomeTotals = {
+  collected: "0",
+  receivable: "0",
+  receivableCount: 0,
+  overdue: "0",
+  overdueCount: 0,
+  missingRateCount: 0,
+  collectedMissingRate: 0,
+  receivableMissingRate: 0,
+  overdueMissingRate: 0,
+};
+
+/**
+ * Per-customer income figures using exactly the same rules as `customerCashSummary` (collected) and
+ * `openItems` (receivable / overdue). One grouped scan of financial_transactions only – no joins –
+ * so a transaction can never be counted twice. Transactions without a customer are never attributed.
+ */
+export async function customerIncomeTotals(q: Q, base: Currency, today: string, customerIds: string[]): Promise<Map<string, CustomerIncomeTotals>> {
+  const out = new Map<string, CustomerIncomeTotals>();
+  if (customerIds.length === 0) return out;
+  const due = sql`coalesce(${ft.dueDate}, ${ft.transactionDate})`;
+  const rows = await q
+    .select({
+      customerId: ft.customerId,
+      collected: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${ft.status} = 'completed'), 0)::text`,
+      receivable: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${ft.status} = 'pending'), 0)::text`,
+      receivableCount: sql<number>`count(*) filter (where ${ft.status} = 'pending')::int`,
+      overdue: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${ft.status} = 'pending' and ${due} < ${today}), 0)::text`,
+      overdueCount: sql<number>`count(*) filter (where ${ft.status} = 'pending' and ${due} < ${today})::int`,
+      missingRateCount: countMissing,
+      collectedMissingRate: sql<number>`count(*) filter (where ${ft.baseAmount} is null and ${ft.status} = 'completed')::int`,
+      receivableMissingRate: sql<number>`count(*) filter (where ${ft.baseAmount} is null and ${ft.status} = 'pending')::int`,
+      overdueMissingRate: sql<number>`count(*) filter (where ${ft.baseAmount} is null and ${ft.status} = 'pending' and ${due} < ${today})::int`,
+    })
+    .from(ft)
+    .where(
+      and(
+        eq(ft.type, "income"),
+        inArray(ft.status, ["completed", "pending"]),
+        eq(ft.baseCurrency, base),
+        inArray(ft.customerId, customerIds),
+      ),
+    )
+    .groupBy(ft.customerId);
+  for (const id of customerIds) out.set(id, { ...ZERO_CUSTOMER_TOTALS });
+  for (const { customerId, ...totals } of rows) if (customerId) out.set(customerId, totals);
+  return out;
+}

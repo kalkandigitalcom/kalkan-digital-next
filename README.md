@@ -85,7 +85,7 @@ npm run build         # production build (+ dist-scripts/ migrate & create-admin
 npm run start         # build sonrası çalıştırma
 npm run typecheck     # tsc --noEmit
 npm run lint          # eslint
-TEST_DATABASE_URL=postgres://…/kalkan_digital_test npm test   # adı "test" içeren, silinebilir bir DB!
+TEST_DATABASE_URL=postgres://…@localhost/kalkan_digital_test npm test   # yalnızca yerel (localhost/127.0.0.1), adı "_test" ile biten, silinebilir bir DB!
 npm run db:generate   # şema değişikliğinden yeni migration üret
 npm run db:migrate    # bekleyen migration'ları uygula
 npm run admin:create  # yönetici oluştur  ·  -- --reset-password ile parola sıfırla
