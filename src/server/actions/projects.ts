@@ -11,6 +11,10 @@ import { logActivity } from "@/server/activity";
 import { dbErrorMessage, errorState, parseForm, successState, v } from "@/server/validation";
 import type { ActionState } from "@/lib/action-state";
 
+/** Inline use from the main work screen (/admin/workspace): return a result instead of redirecting. */
+function isInline(formData: FormData) {
+  return formData.get("_inline") === "1";
+}
 const projectSchema = z
   .object({
     name: v.requiredText(200, "Proje adı zorunludur."),
@@ -55,6 +59,10 @@ export async function createProjectAction(_prev: ActionState, formData: FormData
     return errorState(dbErrorMessage(e));
   }
   revalidatePath("/admin/projects");
+  if (isInline(formData)) {
+    revalidatePath("/admin", "layout");
+    return successState("Proje eklendi.", { id });
+  }
   redirect(`/admin/projects/${id}?flash=created`);
 }
 
@@ -86,6 +94,10 @@ export async function updateProjectAction(_prev: ActionState, formData: FormData
     return errorState(dbErrorMessage(e));
   }
   revalidatePath(`/admin/projects/${id.data}`);
+  if (isInline(formData)) {
+    revalidatePath("/admin", "layout");
+    return successState("Proje güncellendi.");
+  }
   redirect(`/admin/projects/${id.data}?flash=updated`);
 }
 

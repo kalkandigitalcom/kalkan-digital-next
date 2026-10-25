@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   BarChart3,
   CalendarClock,
@@ -23,9 +23,11 @@ import { Logo } from "@/components/brand/logo";
 import { cn } from "@/lib/cn";
 import { logoutAction } from "@/server/actions/auth";
 
+/** Main daily screen; everything else is secondary access. */
+const PRIMARY = { href: "/admin/workspace", label: "Ana ekran", icon: Table2 };
+
 const NAV = [
   { href: "/admin/dashboard", label: "Genel bakış", icon: LayoutDashboard },
-  { href: "/admin/workspace", label: "Çalışma ekranı", icon: Table2 },
   { href: "/admin/customers", label: "Müşteriler", icon: Users },
   { href: "/admin/projects", label: "Projeler", icon: FolderKanban },
   { href: "/admin/transactions", label: "Gelir & gider", icon: Wallet },
@@ -40,12 +42,13 @@ const NAV = [
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   return (
-    <nav className="flex-1 space-y-0.5 px-3" aria-label="Yönetim menüsü">
-      {NAV.map(({ href, label, icon: Icon }) => {
+    <nav className="flex-1 space-y-0.5 overflow-y-auto px-3" aria-label="Yönetim menüsü">
+      {[PRIMARY, ...NAV].map(({ href, label, icon: Icon }, i) => {
         const active = pathname === href || pathname.startsWith(href + "/");
         return (
+          <Fragment key={href}>
+            {i === 1 ? <p className="px-3 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-wider text-navy-400">Diğer bölümler</p> : null}
           <Link
-            key={href}
             href={href}
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
@@ -57,6 +60,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             <Icon className={cn("size-4 shrink-0", active ? "text-brand-400" : "text-navy-300 group-hover:text-navy-100")} aria-hidden />
             {label}
           </Link>
+          </Fragment>
         );
       })}
     </nav>
@@ -95,7 +99,7 @@ export function AdminSidebar({ user }: { user: { name: string; email: string } }
       {/* Desktop: narrow fixed sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col bg-navy-900 lg:flex">
         <div className="flex h-16 items-center px-6">
-          <Link href="/admin/dashboard" aria-label="Genel bakış">
+          <Link href="/admin/workspace" aria-label="Ana ekran">
             <Logo variant="onDark" size="sm" />
           </Link>
         </div>
@@ -105,7 +109,7 @@ export function AdminSidebar({ user }: { user: { name: string; email: string } }
 
       {/* Mobile top bar */}
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between bg-navy-900 px-4 lg:hidden">
-        <Link href="/admin/dashboard" aria-label="Genel bakış">
+        <Link href="/admin/workspace" aria-label="Ana ekran">
           <Logo variant="onDark" size="sm" />
         </Link>
         <button

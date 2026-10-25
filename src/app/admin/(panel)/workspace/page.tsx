@@ -9,7 +9,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/cn";
 import { QuickAdd, WorkspaceGrid } from "./workspace-client";
 
-export const metadata: Metadata = { title: "Müşteri çalışma ekranı" };
+export const metadata: Metadata = { title: "Ana ekran" };
 const BASE = "/admin/workspace";
 
 const VIEWS = [
@@ -21,7 +21,7 @@ const VIEWS = [
 export default async function WorkspacePage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   await requireAdmin();
   const params = flatParams(await searchParams);
-  const { rows, total, page, pageSize, filters, base, today } = await listWorkspace(params);
+  const { rows, total, page, pageSize, filters, base, today, incomeCategories } = await listWorkspace(params);
   const viewHref = (v: string) => {
     const sp = new URLSearchParams();
     if (filters.q) sp.set("q", filters.q);
@@ -34,8 +34,10 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
     <div data-wide className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl font-bold text-navy-900">Müşteriler</h1>
-          <p className="text-xs text-navy-500">Hücreye tıklayarak düzenleyin · Enter kaydeder, Esc vazgeçer · Tutarlar {base} karşılığıdır.</p>
+          <h1 className="font-display text-xl font-bold text-navy-900">Müşteriler ve işler</h1>
+          <p className="text-xs text-navy-500">
+            Hücreye tıklayıp düzenleyin (Enter kaydeder, Esc vazgeçer) · Proje, ödeme ve hizmet eklemek için satırdaki + bağlantılarını veya oku kullanın · Tutarlar {base} karşılığıdır.
+          </p>
         </div>
         <QuickAdd />
       </div>
@@ -76,7 +78,7 @@ export default async function WorkspacePage({ searchParams }: { searchParams: Pr
           <EmptyState icon={Users} title={filters.q ? "Sonuç bulunamadı" : "Henüz müşteri yok"} description={filters.q ? "Aramayı değiştirin." : "Yukarıdan ilk müşteriyi ekleyin."} />
         </div>
       ) : (
-        <WorkspaceGrid rows={rows} base={base} today={today} />
+        <WorkspaceGrid rows={rows} base={base} today={today} categories={incomeCategories} />
       )}
 
       {total > pageSize ? (

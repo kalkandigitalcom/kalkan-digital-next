@@ -20,6 +20,9 @@ describe.skipIf(!hasTestDb)("customer workspace grid (PostgreSQL)", () => {
   let db: DB;
   let svc: typeof import("@/server/services/workspace");
   let actions: typeof import("@/server/actions/workspace");
+  let projectActions: typeof import("@/server/actions/projects");
+  let txActions: typeof import("@/server/actions/transactions");
+  let recurringActions: typeof import("@/server/actions/recurring");
   const today = todayIso();
   let incomeCat: string;
   let expenseCat: string;
@@ -61,6 +64,9 @@ describe.skipIf(!hasTestDb)("customer workspace grid (PostgreSQL)", () => {
     db = await setupTestDb();
     svc = await import("@/server/services/workspace");
     actions = await import("@/server/actions/workspace");
+    projectActions = await import("@/server/actions/projects");
+    txActions = await import("@/server/actions/transactions");
+    recurringActions = await import("@/server/actions/recurring");
   });
   afterAll(async () => {
     await closeTestDb();
@@ -202,5 +208,69 @@ describe.skipIf(!hasTestDb)("customer workspace grid (PostgreSQL)", () => {
     expect(await add("  ")).toMatchObject({ status: "error" });
     const rows = (await svc.listWorkspace({})).rows;
     expect(rows.find((r) => r.companyName === "Gamma Pansiyon")?.status).toBe("active");
+  });
+
+  const form = (o: Record<string, string>) => {
+    const fd = new FormData();
+    for (const [k, v] of Object.entries(o)) fd.set(k, v);
+    return fd;
+  };
+
+  it("lists open receivables and the last payments per customer", async () => {
+    const a = (await svc.listWorkspace({})).rows.find((r) => r.id === A)!;
+    expect(a.openReceivables.map((t) => t.amount)).toEqual(["450.00", "300.00"]); // ordered by due date
+    expect(a.openReceivables[0]!.date).toBe(addDays(today, -20));
+    expect(a.recentPayments).toHaveLength(4); // completed income only (cancelled & expense excluded)
+    expect(a.recentPayments.find((t) => t.currency === "USD")!.baseAmount).toBeNull();
+    const b = (await svc.listWorkspace({})).rows.find((r) => r.id === B)!;
+    expect(b.recentPayments).toHaveLength(5);
+  });
+
+  it("adds a project inline with the existing project validation", async () => {
+    const ok = await projectActions.createProjectAction(idleState, form({ _inline: "1", customerId: B, name: "Beta site", projectUrl: "beta.example", agreedAmount: "12.500,00", currency: "TRY", projectType: "web_design", status: "in_progress" }));
+    expect(ok).toMatchObject({ status: "success" });
+    const [p] = await db.select().from(s.projects).where(eq(s.projects.name, "Beta site"));
+    expect(p).toMatchObject({ customerId: B, projectUrl: "https://beta.example", agreedAmount: "12500.00" });
+    const bad = await projectActions.createProjectAction(idleState, form({ _inline: "1", customerId: B, name: "", currency: "TRY", projectType: "web_design", status: "planned" }));
+    expect(bad.status).toBe("error");
+    // Without the inline flag the original behaviour (redirect to the project page) is unchanged.
+    await expect(projectActions.createProjectAction(idleState, form({ customerId: B, name: "Yönlenen", currency: "TRY", projectType: "web_design", status: "planned" }))).rejects.toThrow();
+  });
+
+  it("edits a project inline and keeps unshown fields", async () => {
+    const [p] = await db.insert(s.projects).values({ customerId: B, name: "Eski ad", currency: "TRY", agreedAmount: "100.00", estimatedCost: "40.00", internalNotes: "gizli not", startDate: addDays(today, -10) }).returning();
+    const res = await projectActions.updateProjectAction(
+      idleState,
+      form({ _inline: "1", id: p!.id, customerId: B, name: "Yeni ad", projectUrl: "", agreedAmount: "150,00", currency: "TRY", status: "completed", projectType: "web_design", description: "", startDate: addDays(today, -10), targetDate: "", deliveredDate: "", quotedAmount: "", estimatedCost: "40.00", internalNotes: "gizli not" }),
+    );
+    expect(res).toMatchObject({ status: "success" });
+    const [after] = await db.select().from(s.projects).where(eq(s.projects.id, p!.id));
+    expect(after).toMatchObject({ name: "Yeni ad", agreedAmount: "150.00", status: "completed", estimatedCost: "40.00", internalNotes: "gizli not", startDate: addDays(today, -10) });
+  });
+
+  it("records payments inline using the existing finance rules", async () => {
+    const before = (await svc.listWorkspace({})).rows.find((r) => r.id === B)!.finance;
+    const paid = await txActions.createTransactionAction(idleState, form({ _inline: "1", type: "income", customerId: B, amount: "1.000,50", currency: "TRY", status: "completed", transactionDate: today, categoryId: incomeCat, description: "Beta ödemesi" }));
+    expect(paid).toMatchObject({ status: "success" });
+    const owed = await txActions.createTransactionAction(idleState, form({ _inline: "1", type: "income", customerId: B, amount: "200", currency: "EUR", status: "pending", transactionDate: today, dueDate: addDays(today, -1), categoryId: incomeCat, description: "Beta EUR" }));
+    expect(owed).toMatchObject({ status: "success" });
+    const future = await txActions.createTransactionAction(idleState, form({ _inline: "1", type: "income", customerId: B, amount: "5", currency: "TRY", status: "completed", transactionDate: addDays(today, 3), categoryId: incomeCat, description: "Gelecek" }));
+    expect(future.status).toBe("error"); // collected payments cannot be dated in the future
+    const after = (await svc.listWorkspace({})).rows.find((r) => r.id === B)!.finance;
+    expect(after.collected).toBe("1050.50"); // 50.00 + 1000.50
+    expect(after.receivable).toBe(before.receivable); // EUR without rate is not added to TRY totals
+    expect(after.receivableMissingRate).toBe(1);
+    expect(after.overdueMissingRate).toBe(1);
+  });
+
+  it("adds a recurring service inline", async () => {
+    const res = await recurringActions.createRecurringAction(
+      idleState,
+      form({ _inline: "1", customerId: B, categoryId: incomeCat, name: "Beta hosting", amount: "3000", currency: "TRY", period: "yearly", startDate: addDays(today, 20), nextRenewalDate: addDays(today, 20), status: "active", paymentTermDays: "0" }),
+    );
+    expect(res).toMatchObject({ status: "success" });
+    const b = (await svc.listWorkspace({})).rows.find((r) => r.id === B)!;
+    expect(b.annualFees).toEqual([{ currency: "TRY", amount: "3000.00" }]);
+    expect(b.nextRenewal).toBe(addDays(today, 20));
   });
 });

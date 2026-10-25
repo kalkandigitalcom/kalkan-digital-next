@@ -27,7 +27,7 @@ const loginSchema = z.object({
 
 function safeNext(next: string | undefined) {
   if (next && next.startsWith("/admin/") && !next.startsWith("//") && !next.startsWith("/admin/login")) return next;
-  return "/admin/dashboard";
+  return "/admin/workspace";
 }
 
 export async function loginAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -121,5 +121,5 @@ export async function setupAction(_prev: ActionState, formData: FormData): Promi
   });
   if (!created) return errorState("Kurulum zaten tamamlanmış. Giriş sayfasını kullanın.");
   await createSession(created.id, { ip, userAgent: await getUserAgent() });
-  redirect("/admin/dashboard");
+  redirect("/admin/workspace");
 }

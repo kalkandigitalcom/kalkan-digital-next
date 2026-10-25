@@ -23,6 +23,10 @@ import { dbErrorMessage, errorState, parseForm, successState, v } from "@/server
 import { isIsoDate, todayIso } from "@/lib/dates";
 import type { ActionState } from "@/lib/action-state";
 
+/** Inline use from the main work screen (/admin/workspace): return a result instead of redirecting. */
+function isInline(formData: FormData) {
+  return formData.get("_inline") === "1";
+}
 const txSchema = z
   .object({
     type: v.enumOf(transactionType.enumValues),
@@ -122,6 +126,7 @@ export async function createTransactionAction(_prev: ActionState, formData: Form
     return errorState(dbErrorMessage(e));
   }
   revalidateFinance();
+  if (isInline(formData)) return successState(parsed.data.type === "income" ? "Ödeme kaydedildi." : "Gider kaydedildi.", { id });
   const back = formData.get("returnTo");
   redirect(typeof back === "string" && /^\/admin\/[\w\-/]*$/.test(back) ? `${back}${back.includes("?") ? "&" : "?"}flash=created` : `/admin/transactions?flash=created`);
 }

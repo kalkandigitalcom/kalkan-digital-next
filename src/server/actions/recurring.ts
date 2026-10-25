@@ -15,6 +15,10 @@ import { dbErrorMessage, errorState, parseForm, successState, v } from "@/server
 import { formatDate, todayIso } from "@/lib/dates";
 import type { ActionState } from "@/lib/action-state";
 
+/** Inline use from the main work screen (/admin/workspace): return a result instead of redirecting. */
+function isInline(formData: FormData) {
+  return formData.get("_inline") === "1";
+}
 const schema = z
   .object({
     customerId: z.string().refine((s) => z.uuid().safeParse(s).success, "Müşteri seçin."),
@@ -65,6 +69,10 @@ export async function createRecurringAction(_prev: ActionState, formData: FormDa
     return errorState(dbErrorMessage(e));
   }
   revalidatePath("/admin/recurring");
+  if (isInline(formData)) {
+    revalidatePath("/admin", "layout");
+    return successState("Hizmet eklendi.", { id });
+  }
   redirect(`/admin/recurring/${id}?flash=created`);
 }
 

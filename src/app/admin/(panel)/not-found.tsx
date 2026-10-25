@@ -6,7 +6,7 @@ export default function NotFound() {
       <p className="font-display text-5xl font-bold text-navy-200">404</p>
       <h1 className="mt-2 font-display text-lg font-semibold text-navy-900">Kayıt bulunamadı</h1>
       <p className="mt-1 text-sm text-navy-500">Aradığınız kayıt silinmiş veya hiç oluşturulmamış olabilir.</p>
-      <LinkButton href="/admin/dashboard" className="mt-6">Genel bakışa dön</LinkButton>
+      <LinkButton href="/admin/workspace" className="mt-6">Ana ekrana dön</LinkButton>
     </div>
   );
 }

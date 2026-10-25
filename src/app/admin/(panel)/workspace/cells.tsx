@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition, type KeyboardEvent } from "react";
+import type React from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { updateWorkspaceCellAction, type WorkspaceField } from "@/server/actions/workspace";
 import { idleState } from "@/lib/action-state";
 import { cn } from "@/lib/cn";
 import { useToast } from "@/components/ui/toast";
+import { useFieldError } from "@/components/ui/form";
 
 export const STATUS_OPTIONS = [
   { value: "active", label: "Aktif" },
@@ -150,5 +152,47 @@ export function EditableText({
       <span className={cn("min-w-0 flex-1", multiline ? "line-clamp-2 whitespace-pre-line" : "truncate", displayClassName)}>{current || placeholder}</span>
       {pending ? <Loader2 className="size-3 shrink-0 animate-spin text-navy-400" aria-hidden /> : null}
     </button>
+  );
+}
+
+/* ------------------------------------------------------------------------------------------------ */
+/*                       Compact form fields for the inline (ActionForm) forms                      */
+/* ------------------------------------------------------------------------------------------------ */
+
+const MINI = "h-8 w-full rounded-md border bg-white px-2 text-xs text-navy-900 placeholder:text-navy-300 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100";
+
+export function MiniInput({ name, label, className, ...props }: { name: string; label: string; className?: string } & Omit<React.ComponentProps<"input">, "name">) {
+  const error = useFieldError(name);
+  return (
+    <label className={cn("block min-w-0", className)}>
+      <span className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide text-navy-500">{label}</span>
+      <input name={name} aria-invalid={error ? true : undefined} title={error} className={cn(MINI, error ? "border-red-400" : "border-navy-200")} {...props} />
+      {error ? <span className="mt-0.5 block text-[10px] leading-tight text-red-600">{error}</span> : null}
+    </label>
+  );
+}
+
+export function MiniSelect({
+  name,
+  label,
+  options,
+  placeholder,
+  className,
+  ...props
+}: { name: string; label: string; options: readonly { value: string; label: string }[]; placeholder?: string; className?: string } & Omit<React.ComponentProps<"select">, "name">) {
+  const error = useFieldError(name);
+  return (
+    <label className={cn("block min-w-0", className)}>
+      <span className="mb-0.5 block text-[10px] font-semibold uppercase tracking-wide text-navy-500">{label}</span>
+      <select name={name} aria-invalid={error ? true : undefined} className={cn(MINI, "pr-6", error ? "border-red-400" : "border-navy-200")} {...props}>
+        {placeholder !== undefined ? <option value="">{placeholder}</option> : null}
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      {error ? <span className="mt-0.5 block text-[10px] leading-tight text-red-600">{error}</span> : null}
+    </label>
   );
 }

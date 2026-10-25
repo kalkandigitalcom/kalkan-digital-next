@@ -10,7 +10,7 @@ import { formatMoney, type CurrencyCode } from "@/lib/money";
 import { diffDays, formatDate } from "@/lib/dates";
 import { cn } from "@/lib/cn";
 import { useToast } from "@/components/ui/toast";
-import { RowDetail } from "./detail";
+import { RowDetail, type DetailFocus } from "./detail";
 import { EditableText, STATUS_OPTIONS, useSaveCell } from "./cells";
 
 function StatusCell({ row }: { row: WsRow }) {
@@ -69,8 +69,9 @@ function MoneyLine({ value, currency, className }: { value: string; currency: st
 const TH = "sticky top-0 z-20 border-b border-navy-200 bg-navy-50 px-2 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-navy-500";
 const TD = "border-b border-navy-100 px-2 py-1.5 align-top text-xs text-navy-800 group-hover:bg-navy-50";
 
-export function WorkspaceGrid({ rows, base, today }: { rows: WsRow[]; base: string; today: string }) {
-  const [open, setOpen] = useState<Set<string>>(() => new Set());
+export function WorkspaceGrid({ rows, base, today, categories }: { rows: WsRow[]; base: string; today: string; categories: { value: string; label: string }[] }) {
+  // Expanded rows and which inline form (if any) should receive focus.
+  const [open, setOpen] = useState<Map<string, DetailFocus>>(() => new Map());
   // Width of the visible scroll area, so an expanded row stays in view while the table scrolls sideways.
   const scrollRef = useRef<HTMLDivElement>(null);
   const [viewWidth, setViewWidth] = useState<number | undefined>(undefined);
@@ -83,9 +84,15 @@ export function WorkspaceGrid({ rows, base, today }: { rows: WsRow[]; base: stri
   }, []);
   const toggle = (id: string) =>
     setOpen((s) => {
-      const n = new Set(s);
+      const n = new Map(s);
       if (n.has(id)) n.delete(id);
-      else n.add(id);
+      else n.set(id, null);
+      return n;
+    });
+  const openWith = (id: string, focus: DetailFocus) =>
+    setOpen((s) => {
+      const n = new Map(s);
+      n.set(id, focus);
       return n;
     });
 
@@ -137,6 +144,13 @@ export function WorkspaceGrid({ rows, base, today }: { rows: WsRow[]; base: stri
                       <div className="min-w-0 flex-1">
                         <EditableText customerId={r.id} field="companyName" value={r.companyName} placeholder="Firma adı" label="Firma adı" displayClassName="text-[13px] font-semibold text-navy-900" />
                         {r.contactName ? <p className="truncate px-2 text-[11px] text-navy-500">{r.contactName}</p> : null}
+                        <div className="flex gap-2 px-2 pt-0.5 text-[11px] opacity-70 group-hover:opacity-100 focus-within:opacity-100">
+                          {(["project", "payment", "service"] as const).map((k) => (
+                            <button key={k} type="button" onClick={() => openWith(r.id, k)} className="font-semibold text-brand-600 hover:underline">
+                              + {k === "project" ? "Proje" : k === "payment" ? "Ödeme" : "Hizmet"}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -215,7 +229,7 @@ export function WorkspaceGrid({ rows, base, today }: { rows: WsRow[]; base: stri
                   <tr>
                     <td colSpan={9} className="border-b border-navy-200 bg-navy-50/50 p-0">
                       <div className="sticky left-0" style={{ width: viewWidth }}>
-                        <RowDetail row={r} base={base} today={today} />
+                        <RowDetail key={`${r.id}-${open.get(r.id) ?? ""}`} row={r} base={base} today={today} categories={categories} focus={open.get(r.id) ?? null} />
                       </div>
                     </td>
                   </tr>
