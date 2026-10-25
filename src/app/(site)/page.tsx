@@ -30,7 +30,7 @@ import { listPublishedPortfolio } from "@/server/services/portfolio";
 import { getPublicContact, waHref } from "@/server/public";
 import { processSteps, reasons, sectors, services } from "@/lib/content";
 import { site } from "@/lib/site";
-import { ProjectCard } from "@/components/public/project-card";
+import { ReferenceLogos } from "@/components/public/project-card";
 import { yearOf, todayIso } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
@@ -57,7 +57,7 @@ function SectionHeading({ eyebrow, title, text, light }: { eyebrow: string; titl
 }
 
 export default async function HomePage() {
-  const [projects, contact] = await Promise.all([listPublishedPortfolio(6).catch(() => []), getPublicContact()]);
+  const [projects, contact] = await Promise.all([listPublishedPortfolio(8).catch(() => []), getPublicContact()]);
   const years = yearOf(todayIso()) - site.foundedYear;
   const wa = waHref(contact.whatsapp, "Merhaba, projem hakkında bilgi almak istiyorum.");
 
@@ -193,9 +193,7 @@ export default async function HomePage() {
             ) : null}
           </div>
           {projects.length > 0 ? (
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.map((p) => <ProjectCard key={p.id} p={p} />)}
-            </div>
+            <ReferenceLogos items={projects} className="mt-12" />
           ) : (
             <div className="mt-12 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
               <p className="font-display text-lg font-bold text-navy-900">Proje vitrinimizi güncelliyoruz.</p>

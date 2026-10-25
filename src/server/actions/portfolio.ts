@@ -34,6 +34,7 @@ const schema = z.object({
   isFeatured: v.checkbox(),
   sortOrder: z.coerce.number().int().min(0).max(9999).default(0),
   removeImage: v.checkbox(),
+  removeLogo: v.checkbox(),
 });
 
 async function uniqueSlug(base: string, excludeId?: string) {
@@ -56,6 +57,13 @@ async function handleImage(formData: FormData) {
   return null;
 }
 
+/** Brand logo for the public references grid (PNG / JPEG / WebP, validated by content). */
+async function handleLogo(formData: FormData) {
+  const file = formData.get("logo");
+  if (file instanceof File && file.size > 0) return saveImage(file, "logos");
+  return null;
+}
+
 function revalidatePublic() {
   revalidatePath("/", "layout");
 }
@@ -66,13 +74,19 @@ export async function createPortfolioAction(_prev: ActionState, formData: FormDa
   if (!parsed.ok) return parsed.state;
   const img = await handleImage(formData);
   if (img && !img.ok) return errorState(img.error, { image: img.error });
-  const { removeImage: _r, slug, ...data } = parsed.data;
+  const logo = await handleLogo(formData);
+  if (logo && !logo.ok) {
+    if (img?.ok) await removeUpload(img.path);
+    return errorState(logo.error, { logo: logo.error });
+  }
+  const { removeImage: _r, removeLogo: _l, slug, ...data } = parsed.data;
   void _r;
+  void _l;
   let id: string;
   try {
     const [row] = await db
       .insert(portfolioItems)
-      .values({ ...data, slug: await uniqueSlug(slug ?? data.title), imagePath: img?.ok ? img.path : null })
+      .values({ ...data, slug: await uniqueSlug(slug ?? data.title), imagePath: img?.ok ? img.path : null, logoPath: logo?.ok ? logo.path : null })
       .returning({ id: portfolioItems.id });
     id = row!.id;
     await logActivity({ userId: admin.id, action: "portfolio.create", entityType: "portfolio", entityId: id, summary: data.title });
@@ -93,14 +107,21 @@ export async function updatePortfolioAction(_prev: ActionState, formData: FormDa
   if (!before) return errorState("Kayıt bulunamadı.");
   const img = await handleImage(formData);
   if (img && !img.ok) return errorState(img.error, { image: img.error });
-  const { removeImage, slug, ...data } = parsed.data;
+  const logo = await handleLogo(formData);
+  if (logo && !logo.ok) {
+    if (img?.ok) await removeUpload(img.path);
+    return errorState(logo.error, { logo: logo.error });
+  }
+  const { removeImage, removeLogo, slug, ...data } = parsed.data;
   const imagePath = img?.ok ? img.path : removeImage ? null : before.imagePath;
+  const logoPath = logo?.ok ? logo.path : removeLogo ? null : before.logoPath;
   try {
     await db
       .update(portfolioItems)
-      .set({ ...data, slug: slug && slug === before.slug ? before.slug : await uniqueSlug(slug ?? data.title, id.data), imagePath })
+      .set({ ...data, slug: slug && slug === before.slug ? before.slug : await uniqueSlug(slug ?? data.title, id.data), imagePath, logoPath })
       .where(eq(portfolioItems.id, id.data));
     if (imagePath !== before.imagePath) await removeUpload(before.imagePath);
+    if (logoPath !== before.logoPath) await removeUpload(before.logoPath);
     await logActivity({ userId: admin.id, action: "portfolio.update", entityType: "portfolio", entityId: id.data, summary: data.title });
   } catch (e) {
     return errorState(dbErrorMessage(e));
@@ -116,6 +137,7 @@ export async function deletePortfolioAction(_prev: ActionState, formData: FormDa
   const res = await db.delete(portfolioItems).where(eq(portfolioItems.id, id.data)).returning();
   if (!res.length) return errorState("Kayıt bulunamadı.");
   await removeUpload(res[0]!.imagePath);
+  await removeUpload(res[0]!.logoPath);
   await logActivity({ userId: admin.id, action: "portfolio.delete", entityType: "portfolio", entityId: id.data, summary: res[0]!.title });
   revalidatePublic();
   return successState("Portfolyo kaydı silindi.");

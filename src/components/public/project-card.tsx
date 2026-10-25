@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { serviceTypes } from "@/lib/labels";
 
 export interface PublicProject {
@@ -8,33 +7,54 @@ export interface PublicProject {
   slug: string;
   clientName: string | null;
   category: Parameters<typeof serviceTypes.label>[0];
-  summary: string | null;
-  imagePath: string | null;
-  year: number | null;
+  logoPath: string | null;
 }
 
-export function ProjectCard({ p }: { p: PublicProject }) {
+/*
+ * Reference logos: muted (grayscale, low opacity) at rest, original colours on hover / keyboard
+ * focus with a soft transition. Tailwind v4 applies `hover:` only on devices that can hover, so on
+ * touch screens logos stay muted and only light up while pressed (`active:`) – never permanently.
+ */
+const reveal =
+  "transition-[filter,opacity,color] duration-500 ease-out motion-reduce:transition-none group-hover:opacity-100 group-hover:grayscale-0 group-focus-visible:opacity-100 group-focus-visible:grayscale-0 group-active:opacity-100 group-active:grayscale-0";
+
+function ReferenceLogo({ p }: { p: PublicProject }) {
+  const brand = p.clientName ?? p.title;
   return (
-    <article className="group overflow-hidden rounded-2xl border border-navy-100 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-lift">
-      <Link href={`/projeler/${p.slug}`} className="block">
-        <div className="aspect-[16/10] overflow-hidden bg-gradient-to-br from-navy-800 to-brand-700">
-          {p.imagePath ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={`/media/${p.imagePath}`} alt={p.title} loading="lazy" className="size-full object-cover transition duration-500 group-hover:scale-[1.03]" />
-          ) : (
-            <div className="grid size-full place-items-center font-display text-lg font-bold text-white/80">{p.title}</div>
-          )}
-        </div>
-        <div className="p-6">
-          <p className="text-xs font-semibold text-brand-600">{serviceTypes.label(p.category)}{p.year ? ` · ${p.year}` : ""}</p>
-          <h3 className="mt-2 flex items-start justify-between gap-3 font-display text-lg font-bold text-navy-900">
-            {p.title}
-            <ArrowUpRight className="mt-1 size-4 shrink-0 text-navy-300 transition group-hover:text-brand-600" aria-hidden />
-          </h3>
-          {p.clientName ? <p className="text-xs text-navy-400">{p.clientName}</p> : null}
-          {p.summary ? <p className="mt-3 line-clamp-2 text-sm text-navy-500">{p.summary}</p> : null}
-        </div>
-      </Link>
-    </article>
+    <Link
+      href={`/projeler/${p.slug}`}
+      title={p.clientName && p.clientName !== p.title ? `${p.title} · ${p.clientName}` : p.title}
+      className="group flex h-28 items-center justify-center rounded-2xl border border-navy-100 bg-white px-6 outline-none transition-colors duration-500 hover:border-navy-200 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:h-32 sm:px-8"
+    >
+      {p.logoPath ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={`/media/${p.logoPath}`}
+          alt={`${brand} logosu`}
+          loading="lazy"
+          decoding="async"
+          className={`h-auto max-h-10 w-auto max-w-full object-contain opacity-55 grayscale sm:max-h-12 ${reveal}`}
+        />
+      ) : (
+        // No logo uploaded yet: a restrained wordmark of the brand name.
+        <span className={`line-clamp-2 text-center font-display text-base font-bold tracking-tight text-navy-400 opacity-80 sm:text-lg ${reveal} group-hover:text-navy-900 group-focus-visible:text-navy-900 group-active:text-navy-900`}>
+          {brand}
+        </span>
+      )}
+      <span className="sr-only">{`${brand === p.title ? "" : ` – ${p.title}`}, ${serviceTypes.label(p.category)}`}</span>
+    </Link>
+  );
+}
+
+/** Minimal logo wall for published portfolio items; each logo links to its existing project page. */
+export function ReferenceLogos({ items, className = "" }: { items: PublicProject[]; className?: string }) {
+  return (
+    <ul className={`flex flex-wrap justify-center gap-3 sm:gap-4 ${className}`}>
+      {items.map((p) => (
+        <li key={p.id} className="w-[calc(50%-0.375rem)] sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]">
+          <ReferenceLogo p={p} />
+        </li>
+      ))}
+    </ul>
   );
 }

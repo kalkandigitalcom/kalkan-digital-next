@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { listPublishedPortfolio } from "@/server/services/portfolio";
-import { ProjectCard } from "@/components/public/project-card";
+import { ReferenceLogos } from "@/components/public/project-card";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -25,9 +25,7 @@ export default async function ProjectsPage() {
       <section className="py-16">
         <div className="container-page">
           {projects.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.map((p) => <ProjectCard key={p.id} p={p} />)}
-            </div>
+            <ReferenceLogos items={projects} />
           ) : (
             <div className="rounded-2xl border border-dashed border-navy-200 p-12 text-center">
               <p className="font-display text-lg font-bold text-navy-900">Proje vitrinimizi güncelliyoruz.</p>

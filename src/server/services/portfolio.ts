@@ -26,6 +26,7 @@ export async function listPublishedPortfolio(limit = 12) {
       category: portfolioItems.category,
       summary: portfolioItems.summary,
       imagePath: portfolioItems.imagePath,
+      logoPath: portfolioItems.logoPath,
       liveUrl: portfolioItems.liveUrl,
       year: portfolioItems.year,
       tags: portfolioItems.tags,

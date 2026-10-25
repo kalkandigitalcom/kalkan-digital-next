@@ -492,6 +492,8 @@ export const portfolioItems = pgTable(
     summary: varchar("summary", { length: 400 }),
     description: text("description"),
     imagePath: varchar("image_path", { length: 400 }),
+    /** Brand logo shown in the public references grid (uploads/logos/…). Optional. */
+    logoPath: varchar("logo_path", { length: 400 }),
     liveUrl: varchar("live_url", { length: 255 }),
     year: integer("year"),
     tags: text("tags").array().notNull().default(sql`'{}'::text[]`),

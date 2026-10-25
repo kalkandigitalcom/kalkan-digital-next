@@ -20,7 +20,7 @@ export function uploadRoot() {
 }
 
 /** Saves an uploaded image after validating its real content type (not the client-provided one). */
-export async function saveImage(file: File, folder: "portfolio"): Promise<{ ok: true; path: string } | { ok: false; error: string }> {
+export async function saveImage(file: File, folder: "portfolio" | "logos"): Promise<{ ok: true; path: string } | { ok: false; error: string }> {
   if (file.size === 0) return { ok: false, error: "Dosya boş." };
   if (file.size > MAX_BYTES) return { ok: false, error: "Görsel en fazla 5 MB olabilir." };
   const buf = Buffer.from(await file.arrayBuffer());

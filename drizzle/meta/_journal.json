@@ -15,6 +15,13 @@
       "when": 1792423136720,
       "tag": "0001_reference_data",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792955651467,
+      "tag": "0002_portfolio_logo",
+      "breakpoints": true
     }
   ]
 }
