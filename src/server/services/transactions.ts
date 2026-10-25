@@ -13,6 +13,7 @@ import {
   transactionType,
 } from "@/server/db/schema";
 import { requireAdmin } from "@/server/auth/session";
+import { isOverdueSql } from "@/server/finance/core";
 import { getBaseCurrency } from "@/server/settings";
 import { PAGE_SIZE, cleanQuery, likePattern, pageOf, pick, pickOptional } from "@/server/list";
 import { isIsoDate, todayIso } from "@/lib/dates";
@@ -31,7 +32,8 @@ export function transactionFilters(p: Record<string, string | undefined>) {
     customerId: isUuid(p.customerId),
     projectId: isUuid(p.projectId),
     /** Which date the from/to range applies to. */
-    dateField: pick(p.dateField, ["transaction", "settled", "due"] as const, "transaction"),
+    // "transaction" (document date) is no longer offered in the UI; still accepted for old links.
+    dateField: pick(p.dateField, ["settled", "due", "transaction"] as const, "settled"),
     from: isIsoDate(p.from) ? p.from : undefined,
     to: isIsoDate(p.to) ? p.to : undefined,
   };
@@ -39,17 +41,17 @@ export function transactionFilters(p: Record<string, string | undefined>) {
 
 function buildWhere(f: ReturnType<typeof transactionFilters>) {
   const where: SQL[] = [];
-  if (f.q) where.push(or(ilike(ft.description, likePattern(f.q)), ilike(ft.documentNo, likePattern(f.q)), ilike(ft.notes, likePattern(f.q)))!);
+  if (f.q) where.push(or(ilike(ft.description, likePattern(f.q)), ilike(ft.notes, likePattern(f.q)))!);
   if (f.type) where.push(eq(ft.type, f.type));
   if (f.status === "overdue") {
-    where.push(eq(ft.status, "pending"), sql`coalesce(${ft.dueDate}, ${ft.transactionDate}) < ${todayIso()}`);
+    where.push(eq(ft.status, "pending"), isOverdueSql(todayIso()));
   } else if (f.status) where.push(eq(ft.status, f.status));
   if (f.currency) where.push(eq(ft.currency, f.currency));
   if (f.method) where.push(eq(ft.paymentMethod, f.method));
   if (f.categoryId) where.push(eq(ft.categoryId, f.categoryId));
   if (f.customerId) where.push(eq(ft.customerId, f.customerId));
   if (f.projectId) where.push(eq(ft.projectId, f.projectId));
-  const col: SQL = f.dateField === "settled" ? sql`${ft.settledDate}` : f.dateField === "due" ? sql`coalesce(${ft.dueDate}, ${ft.transactionDate})` : sql`${ft.transactionDate}`;
+  const col: SQL = f.dateField === "settled" ? sql`${ft.settledDate}` : f.dateField === "due" ? sql`${ft.dueDate}` : sql`${ft.transactionDate}`;
   if (f.from) where.push(sql`${col} >= ${f.from}`);
   if (f.to) where.push(sql`${col} <= ${f.to}`);
   return where.length ? and(...where) : undefined;
@@ -84,7 +86,6 @@ export async function listTransactions(p: Record<string, string | undefined>) {
         transactionDate: ft.transactionDate,
         settledDate: ft.settledDate,
         dueDate: ft.dueDate,
-        documentNo: ft.documentNo,
         paymentMethod: ft.paymentMethod,
         categoryName: financialCategories.name,
         customerId: ft.customerId,

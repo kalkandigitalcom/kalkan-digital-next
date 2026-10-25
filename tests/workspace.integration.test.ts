@@ -104,7 +104,7 @@ describe.skipIf(!hasTestDb)("customer workspace grid (PostgreSQL)", () => {
     await tx({ type: "income", amount: "999.00", status: "cancelled", customerId: A });
     await tx({ type: "expense", amount: "777.00", customerId: A });
     await tx({ type: "income", amount: "300.00", status: "pending", customerId: A, dueDate: addDays(today, 10) });
-    await tx({ type: "income", amount: "450.00", status: "pending", customerId: A, transactionDate: addDays(today, -20) }); // overdue
+    await tx({ type: "income", amount: "450.00", status: "pending", customerId: A, transactionDate: addDays(today, -20), dueDate: addDays(today, -20) }); // overdue by due date
     await tx({ type: "income", amount: "70.00", status: "pending", transactionDate: addDays(today, -5) }); // no customer
 
     await db.insert(s.recurringServices).values([
@@ -250,11 +250,11 @@ describe.skipIf(!hasTestDb)("customer workspace grid (PostgreSQL)", () => {
 
   it("records payments inline using the existing finance rules", async () => {
     const before = (await svc.listWorkspace({})).rows.find((r) => r.id === B)!.finance;
-    const paid = await txActions.createTransactionAction(idleState, form({ _inline: "1", type: "income", customerId: B, amount: "1.000,50", currency: "TRY", status: "completed", transactionDate: today, categoryId: incomeCat, description: "Beta ödemesi" }));
+    const paid = await txActions.createTransactionAction(idleState, form({ _inline: "1", type: "income", customerId: B, amount: "1.000,50", currency: "TRY", status: "completed", settledDate: today, categoryId: incomeCat, description: "Beta ödemesi" }));
     expect(paid).toMatchObject({ status: "success" });
-    const owed = await txActions.createTransactionAction(idleState, form({ _inline: "1", type: "income", customerId: B, amount: "200", currency: "EUR", status: "pending", transactionDate: today, dueDate: addDays(today, -1), categoryId: incomeCat, description: "Beta EUR" }));
+    const owed = await txActions.createTransactionAction(idleState, form({ _inline: "1", type: "income", customerId: B, amount: "200", currency: "EUR", status: "pending", dueDate: addDays(today, -1), categoryId: incomeCat, description: "Beta EUR" }));
     expect(owed).toMatchObject({ status: "success" });
-    const future = await txActions.createTransactionAction(idleState, form({ _inline: "1", type: "income", customerId: B, amount: "5", currency: "TRY", status: "completed", transactionDate: addDays(today, 3), categoryId: incomeCat, description: "Gelecek" }));
+    const future = await txActions.createTransactionAction(idleState, form({ _inline: "1", type: "income", customerId: B, amount: "5", currency: "TRY", status: "completed", settledDate: addDays(today, 3), categoryId: incomeCat, description: "Gelecek" }));
     expect(future.status).toBe("error"); // collected payments cannot be dated in the future
     const after = (await svc.listWorkspace({})).rows.find((r) => r.id === B)!.finance;
     expect(after.collected).toBe("1050.50"); // 50.00 + 1000.50

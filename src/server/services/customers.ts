@@ -18,7 +18,7 @@ import { getBaseCurrency } from "@/server/settings";
 import { customerCashSummary, projectCollectedExpr } from "@/server/finance/core";
 import { PAGE_SIZE, cleanQuery, likePattern, pageOf, pick, pickOptional } from "@/server/list";
 
-const SORTS = ["company", "created", "status", "first_contact"] as const;
+const SORTS = ["company", "created", "status"] as const;
 
 export async function listCustomers(p: Record<string, string | undefined>) {
   await requireAdmin();
@@ -53,7 +53,6 @@ export async function listCustomers(p: Record<string, string | undefined>) {
     company: sql`lower(${customers.companyName})`,
     created: customers.createdAt,
     status: customers.status,
-    first_contact: customers.firstContactDate,
   }[sort];
 
   const base = await getBaseCurrency();
@@ -103,7 +102,6 @@ export async function getCustomerDetail(id: string) {
         projectType: projects.projectType,
         agreedAmount: projects.agreedAmount,
         currency: projects.currency,
-        targetDate: projects.targetDate,
         collected: projectCollectedExpr(base),
       })
       .from(projects)

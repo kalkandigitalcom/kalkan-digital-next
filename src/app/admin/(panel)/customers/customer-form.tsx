@@ -17,7 +17,6 @@ export interface CustomerDefaults {
   customerType?: string;
   status?: string;
   source?: string | null;
-  firstContactDate?: string | null;
   notes?: string | null;
 }
 
@@ -39,7 +38,6 @@ export function CustomerForm({
         <SelectField name="customerType" label="Müşteri türü" options={customerTypes.list} defaultValue={defaults.customerType ?? "company"} />
         <SelectField name="status" label="Durum" options={customerStatuses.list} defaultValue={defaults.status ?? "lead"} />
         <SelectField name="source" label="Nasıl kazanıldı?" options={acquisitionSources.list} placeholder="Seçiniz" defaultValue={defaults.source ?? ""} />
-        <TextField name="firstContactDate" type="date" label="İlk iletişim tarihi" hint="Boş bırakılırsa bugün" defaultValue={defaults.firstContactDate ?? ""} />
       </FormSection>
       <FormSection title="İletişim" description="Telefon numaralarını uluslararası formatta girebilirsiniz (örn. +90 5xx).">
         <TextField name="phone" type="tel" label="Telefon" defaultValue={defaults.phone ?? ""} autoComplete="off" />

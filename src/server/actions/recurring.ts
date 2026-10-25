@@ -32,7 +32,6 @@ const schema = z
     nextRenewalDate: v.optionalIsoDate(),
     status: v.enumOf(recurringStatus.enumValues),
     autoRenew: v.checkbox(),
-    paymentTermDays: z.coerce.number({ error: "Gün sayısı girin." }).int("Tam sayı girin.").min(0, "0 veya daha büyük olmalı.").max(365, "En fazla 365 gün."),
     notes: v.optionalText(5000),
   })
   .transform((d) => ({ ...d, nextRenewalDate: d.nextRenewalDate ?? d.startDate }))

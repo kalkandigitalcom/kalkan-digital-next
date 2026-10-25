@@ -12,10 +12,8 @@ export interface ProjectDefaults {
   projectType?: string;
   description?: string | null;
   startDate?: string | null;
-  targetDate?: string | null;
   deliveredDate?: string | null;
   currency?: string;
-  quotedAmount?: string | null;
   agreedAmount?: string | null;
   estimatedCost?: string | null;
   status?: string;
@@ -49,7 +47,6 @@ export function ProjectForm({
       </FormSection>
       <FormSection title="Tarihler">
         <TextField name="startDate" type="date" label="Başlangıç" defaultValue={defaults.startDate ?? ""} />
-        <TextField name="targetDate" type="date" label="Hedef teslim" defaultValue={defaults.targetDate ?? ""} />
         <TextField name="deliveredDate" type="date" label="Gerçek teslim" defaultValue={defaults.deliveredDate ?? ""} />
       </FormSection>
       <FormSection
@@ -57,7 +54,6 @@ export function ProjectForm({
         description="Bu alanlar proje bütçesidir. Tahsilatlar ve giderler, projeye bağlanan finansal işlemlerden hesaplanır; proje tamamlandı olarak işaretlense bile otomatik tahsilat oluşmaz."
       >
         <SelectField name="currency" label="Para birimi" options={currencies.list} defaultValue={defaults.currency ?? "TRY"} />
-        <MoneyField name="quotedAmount" label="Teklif edilen tutar" defaultValue={m(defaults.quotedAmount)} />
         <MoneyField name="agreedAmount" label="Anlaşılan toplam tutar" defaultValue={m(defaults.agreedAmount)} />
         <MoneyField name="estimatedCost" label="Tahmini proje maliyeti" defaultValue={m(defaults.estimatedCost)} />
       </FormSection>

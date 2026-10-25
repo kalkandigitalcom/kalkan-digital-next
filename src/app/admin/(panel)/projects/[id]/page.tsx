@@ -74,7 +74,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Anlaşılan tutar" value={<Money value={p.agreedAmount} currency={p.currency} />} hint={p.quotedAmount ? <>Teklif: <Money value={p.quotedAmount} currency={p.currency} /></> : "Teklif tutarı girilmedi"} />
+        <StatCard label="Anlaşılan tutar" value={<Money value={p.agreedAmount} currency={p.currency} />} />
         <StatCard
           label="Tahsil edilen"
           value={<Money value={data.collectedInProjectCurrency} currency={p.currency} />}
@@ -113,7 +113,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                   { label: "Yetkili", value: customer?.contactName },
                   { label: "Telefon", value: customer?.phone },
                   { label: "Başlangıç", value: formatDate(p.startDate) },
-                  { label: "Hedef teslim", value: formatDate(p.targetDate) },
                   { label: "Gerçek teslim", value: formatDate(p.deliveredDate) },
                   { label: "Bağlantı", value: p.projectUrl ? <a href={p.projectUrl} target="_blank" rel="noopener noreferrer nofollow" className="inline-flex items-center gap-1 text-brand-600 hover:underline">{p.projectUrl.replace(/^https?:\/\//, "")} <ExternalLink className="size-3" /></a> : null },
                   { label: "Oluşturulma", value: formatDateTime(p.createdAt) },
@@ -150,7 +149,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 <TBody>
                   {data.transactions.map((t) => (
                     <TR key={t.id}>
-                      <TD className="tabular text-xs">{formatDate(t.settledDate ?? t.dueDate ?? t.transactionDate)}</TD>
+                      <TD className="tabular text-xs">{t.status === "completed" ? formatDate(t.settledDate) : t.status === "pending" ? (t.dueDate ? `Vade ${formatDate(t.dueDate)}` : "Vadesiz") : "—"}</TD>
                       <TD><Link href={`/admin/transactions/${t.id}/edit`} className="font-medium text-navy-900 hover:text-brand-600">{t.description}</Link><div className="text-xs text-navy-400">{t.category}</div></TD>
                       <TD><Badge tone={t.status === "completed" ? "green" : t.status === "pending" ? "amber" : "gray"}>{transactionStatusLabel(t.type, t.status)}</Badge></TD>
                       <TD className="text-right"><Money value={t.amount} currency={t.currency} signed type={t.type} /></TD>

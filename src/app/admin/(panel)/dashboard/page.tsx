@@ -139,7 +139,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                 <li key={t.id} className="flex items-center justify-between gap-3 px-5 py-3">
                   <div className="min-w-0">
                     <Link href={`/admin/transactions/${t.id}/edit`} className="block truncate text-sm font-medium text-navy-900 hover:text-brand-600">{t.description}</Link>
-                    <p className="truncate text-xs text-navy-400">{formatDate(t.date)} · {t.customerName ?? t.category}</p>
+                    <p className="truncate text-xs text-navy-400">{t.status === "pending" ? (t.date ? `Vade ${formatDate(t.date)}` : "Vadesiz") : t.date ? formatDate(t.date) : "—"} · {t.customerName ?? t.category}</p>
                   </div>
                   <div className="shrink-0 text-right">
                     <Money value={t.amount} currency={t.currency} signed type={t.type} className="text-sm font-semibold" />
@@ -158,12 +158,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           ) : (
             <ul className="divide-y divide-navy-100">
               {d.awaiting.map((a) => {
-                const overdue = a.oldestDue < d.today;
+                const overdue = a.oldestDue !== null && a.oldestDue < d.today;
                 return (
                   <li key={a.customerId} className="flex items-center justify-between gap-3 px-5 py-3">
                     <div className="min-w-0">
                       <Link href={`/admin/transactions?customerId=${a.customerId}&type=income&status=pending`} className="block truncate text-sm font-medium text-navy-900 hover:text-brand-600">{a.customerName}</Link>
-                      <p className={`text-xs ${overdue ? "text-red-600" : "text-navy-400"}`}>{a.count} kayıt · en eski vade {formatDate(a.oldestDue)}</p>
+                      <p className={`text-xs ${overdue ? "text-red-600" : "text-navy-400"}`}>{a.count} kayıt · {a.oldestDue ? `en eski vade ${formatDate(a.oldestDue)}` : "vadesiz"}</p>
                     </div>
                     <Money value={a.total} currency={d.base} className="shrink-0 text-sm font-semibold text-amber-700" />
                   </li>

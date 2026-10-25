@@ -136,7 +136,6 @@ const convertSchema = z
     projectType: v.enumOf(serviceType.enumValues),
     agreedAmount: v.optionalMoney(),
     startDate: v.optionalIsoDate(),
-    targetDate: v.optionalIsoDate(),
   })
   .superRefine((d, ctx) => {
     if (d.customerMode === "existing" && !d.existingCustomerId)
@@ -191,7 +190,6 @@ export async function convertQuoteAction(_prev: ActionState, formData: FormData)
           quotedAmount: quote.estimatedAmount,
           agreedAmount: d.agreedAmount ?? quote.estimatedAmount,
           startDate: d.startDate ?? todayIso(),
-          targetDate: d.targetDate,
           status: "planned",
           description: quote.title ?? null,
         })

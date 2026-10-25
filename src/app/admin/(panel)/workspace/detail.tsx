@@ -90,9 +90,7 @@ function ProjectRow({ p, customerId }: { p: WsProject; customerId: string }) {
         <input type="hidden" name="projectType" value={p.projectType} />
         <input type="hidden" name="description" value={p.description ?? ""} />
         <input type="hidden" name="startDate" value={p.startDate ?? ""} />
-        <input type="hidden" name="targetDate" value={p.targetDate ?? ""} />
         <input type="hidden" name="deliveredDate" value={p.deliveredDate ?? ""} />
-        <input type="hidden" name="quotedAmount" value={dec(p.quotedAmount)} />
         <input type="hidden" name="estimatedCost" value={dec(p.estimatedCost)} />
         <input type="hidden" name="internalNotes" value={p.internalNotes ?? ""} />
         <MiniInput name="name" label="Proje" defaultValue={p.name} required className="col-span-3" />
@@ -161,8 +159,7 @@ function AddPayment({ row, base, today, categories, autoFocus }: { row: WsRow; b
           onChange={(e) => setStatus(e.target.value as "completed" | "pending")}
         />
         {currency !== base ? <MiniInput name="exchangeRate" label={`Kur (1 ${currency} = ? ${base})`} inputMode="decimal" placeholder="Boşsa toplamlara katılmaz" /> : null}
-        <MiniInput name="transactionDate" label={status === "completed" ? "Tahsilat tarihi" : "Fatura tarihi"} type="date" defaultValue={today} max={status === "completed" ? today : undefined} required />
-        {status === "pending" ? <MiniInput name="dueDate" label="Vade" type="date" /> : null}
+        {status === "completed" ? <MiniInput name="settledDate" label="Tahsilat tarihi" type="date" defaultValue={today} max={today} required /> : <MiniInput name="dueDate" label="Vade" type="date" />}
         <MiniSelect name="projectId" label="Proje" options={projects} placeholder="—" />
         <MiniSelect name="categoryId" label="Kategori" options={categories} defaultValue={defaultCat} />
         <MiniSelect name="paymentMethod" label="Yöntem" options={paymentMethods.list} placeholder="—" />
@@ -184,8 +181,8 @@ function Payments({ row: r, base, today, categories, focus }: { row: WsRow; base
             <li key={t.id} className="flex items-center justify-between gap-2 py-1.5">
               <span className="min-w-0">
                 <span className="block truncate">{t.description}{t.projectName ? <span className="text-navy-400"> · {t.projectName}</span> : null}</span>
-                <span className={cn("text-[11px]", t.date < today ? "font-semibold text-red-600" : "text-navy-500")}>
-                  Vade {formatDate(t.date)}{t.baseAmount === null ? " · kur girilmemiş" : ""}
+                <span className={cn("text-[11px]", t.date !== null && t.date < today ? "font-semibold text-red-600" : "text-navy-500")}>
+                  {t.date ? `Vade ${formatDate(t.date)}` : "Vadesiz"}{t.baseAmount === null ? " · kur girilmemiş" : ""}
                 </span>
               </span>
               <span className="flex shrink-0 items-center gap-2">
@@ -231,7 +228,6 @@ function AddService({ row, today, categories, autoFocus }: { row: WsRow; today: 
       <input type="hidden" name="_inline" value="1" />
       <input type="hidden" name="customerId" value={row.id} />
       <input type="hidden" name="status" value="active" />
-      <input type="hidden" name="paymentTermDays" value="0" />
       <input type="hidden" name="startDate" value={date} />
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         <MiniInput name="name" label="Yeni hizmet" placeholder="örn. Hosting + domain" required autoFocus={autoFocus} className="col-span-2 sm:col-span-3" />

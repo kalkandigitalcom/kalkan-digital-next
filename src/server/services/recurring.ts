@@ -12,6 +12,7 @@ import {
   recurringStatus,
 } from "@/server/db/schema";
 import { requireAdmin } from "@/server/auth/session";
+import { isOverdueSql } from "@/server/finance/core";
 import { getCompanySettings } from "@/server/settings";
 import { PAGE_SIZE, cleanQuery, likePattern, pageOf, pick, pickOptional } from "@/server/list";
 import { addDays, todayIso } from "@/lib/dates";
@@ -75,14 +76,14 @@ export async function listRecurring(p: Record<string, string | undefined>) {
         customerName: customers.companyName,
         amount: ft.amount,
         currency: ft.currency,
-        dueDate: sql<string>`coalesce(${ft.dueDate}, ${ft.transactionDate})::text`,
+        dueDate: sql<string>`${ft.dueDate}::text`, // billed periods always have a due date
         periodStart: ro.periodStart,
       })
       .from(ro)
       .innerJoin(ft, eq(ft.id, ro.transactionId))
       .innerJoin(rs, eq(rs.id, ro.recurringServiceId))
       .innerJoin(customers, eq(customers.id, rs.customerId))
-      .where(and(eq(ft.status, "pending"), sql`coalesce(${ft.dueDate}, ${ft.transactionDate}) < ${today}`))
+      .where(and(eq(ft.status, "pending"), isOverdueSql(today)))
       .orderBy(asc(sql`coalesce(${ft.dueDate}, ${ft.transactionDate})`))
       .limit(20),
   ]);

@@ -16,7 +16,6 @@ import { Badge, OptionBadge } from "@/components/ui/badge";
 import { FilterBar, FilterSelect } from "@/components/admin/filter-bar";
 import { Money } from "@/components/admin/money";
 import { paymentStatuses, projectStatuses, serviceTypes } from "@/lib/labels";
-import { formatDate, todayIso } from "@/lib/dates";
 
 export const metadata: Metadata = { title: "Projeler" };
 const BASE = "/admin/projects";
@@ -25,7 +24,6 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
   await requireAdmin();
   const params = flatParams(await searchParams);
   const [{ rows, total, page, pageSize }, custs] = await Promise.all([listProjects(params), customerOptions()]);
-  const today = todayIso();
   return (
     <>
       <PageHeader title="Projeler" description="Tüm projeler, bütçeler ve ödeme durumları." actions={<LinkButton href={`${BASE}/new`}><Plus className="size-4" /> Yeni proje</LinkButton>} />
@@ -50,12 +48,10 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                   <SortTH label="Anlaşılan" field="agreed" params={params} basePath={BASE} className="text-right" />
                   <TH className="text-right">Tahsil edilen</TH>
                   <TH>Ödeme</TH>
-                  <SortTH label="Hedef teslim" field="target" params={params} basePath={BASE} />
                 </tr>
               </THead>
               <TBody>
                 {rows.map((p) => {
-                  const late = p.targetDate && !p.deliveredDate && p.targetDate < today && !["completed", "cancelled"].includes(p.status);
                   return (
                     <TR key={p.id}>
                       <TD>
@@ -67,7 +63,6 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
                       <TD className="text-right"><Money value={p.agreedAmount} currency={p.currency} /></TD>
                       <TD className="text-right"><Money value={p.collected} currency={p.currency} /></TD>
                       <TD><OptionBadge value={paymentStatusOf(p.agreedAmount, p.collected)} options={paymentStatuses} /></TD>
-                      <TD className={`tabular text-xs ${late ? "font-semibold text-red-600" : ""}`}>{formatDate(p.targetDate)}{late ? " · gecikti" : ""}</TD>
                     </TR>
                   );
                 })}

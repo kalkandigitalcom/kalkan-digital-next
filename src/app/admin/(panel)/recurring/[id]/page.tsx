@@ -71,7 +71,6 @@ export default async function RecurringDetailPage({ params }: { params: Promise<
                     </span>
                   ),
                 },
-                { label: "Son ödeme vadesi", value: `Yenilemeden ${s.paymentTermDays} gün sonra` },
                 { label: "Son tahsilat", value: formatDate(lastPaid) },
                 { label: "Otomatik yenileme", value: s.autoRenew ? "Açık" : "Kapalı" },
                 { label: "Oluşturulma", value: formatDateTime(s.createdAt) },
@@ -89,7 +88,7 @@ export default async function RecurringDetailPage({ params }: { params: Promise<
               <THead><tr><TH>Dönem</TH><TH>Vade</TH><TH>Durum</TH><TH>Tahsilat</TH><TH className="text-right">Tutar</TH><TH /></tr></THead>
               <TBody>
                 {s.occurrences.map((o) => {
-                  const overdue = o.status === "pending" && (o.dueDate ?? o.periodStart) < today;
+                  const overdue = o.status === "pending" && o.dueDate !== null && o.dueDate < today;
                   return (
                     <TR key={o.id}>
                       <TD className="tabular text-xs">{formatDate(o.periodStart)} – {formatDate(o.periodEnd)}</TD>

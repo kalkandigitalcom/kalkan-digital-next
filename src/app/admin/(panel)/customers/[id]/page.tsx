@@ -110,7 +110,6 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
                   { label: "Web sitesi", value: c.website ? <a className="text-brand-600 hover:underline" href={c.website} target="_blank" rel="noopener noreferrer nofollow">{c.website.replace(/^https?:\/\//, "")}</a> : null },
                   { label: "Adres", value: c.address },
                   { label: "Kaynak", value: acquisitionSources.label(c.source) },
-                  { label: "İlk iletişim", value: formatDate(c.firstContactDate) },
                   { label: "Kayıt", value: formatDateTime(c.createdAt) },
                   { label: "Güncelleme", value: formatDateTime(c.updatedAt) },
                 ]}
@@ -173,7 +172,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
               <EmptyState icon={FolderKanban} title="Proje yok" />
             ) : (
               <Table>
-                <THead><tr><TH>Proje</TH><TH>Durum</TH><TH className="text-right">Anlaşılan</TH><TH>Ödeme</TH><TH>Hedef teslim</TH></tr></THead>
+                <THead><tr><TH>Proje</TH><TH>Durum</TH><TH className="text-right">Anlaşılan</TH><TH>Ödeme</TH></tr></THead>
                 <TBody>
                   {data.projects.map((p) => (
                     <TR key={p.id}>
@@ -181,7 +180,6 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
                       <TD><OptionBadge value={p.status} options={projectStatuses} /></TD>
                       <TD className="text-right"><Money value={p.agreedAmount} currency={p.currency} /></TD>
                       <TD><OptionBadge value={paymentStatusOf(p.agreedAmount, p.collected)} options={paymentStatuses} /></TD>
-                      <TD className="tabular text-xs">{formatDate(p.targetDate)}</TD>
                     </TR>
                   ))}
                 </TBody>
@@ -208,7 +206,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
                 <TBody>
                   {data.transactions.map((t) => (
                     <TR key={t.id}>
-                      <TD className="tabular text-xs">{formatDate(t.settledDate ?? t.transactionDate)}</TD>
+                      <TD className="tabular text-xs">{t.status === "completed" ? formatDate(t.settledDate) : t.status === "pending" ? (t.dueDate ? `Vade ${formatDate(t.dueDate)}` : "Vadesiz") : "—"}</TD>
                       <TD>
                         <Link href={`/admin/transactions/${t.id}/edit`} className="font-medium text-navy-900 hover:text-brand-600">{t.description}</Link>
                         <div className="text-xs text-navy-400">{t.category}</div>

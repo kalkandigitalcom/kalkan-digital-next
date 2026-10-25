@@ -70,7 +70,6 @@ export function ConvertForm({
         <SelectField name="projectType" label="Proje türü" options={serviceTypes.list} defaultValue={defaults.projectType} />
         <MoneyField name="agreedAmount" label={`Anlaşılan tutar (${defaults.currency})`} defaultValue={defaults.agreedAmount} />
         <TextField name="startDate" type="date" label="Başlangıç" />
-        <TextField name="targetDate" type="date" label="Hedef teslim" />
       </div>
       <p className="text-xs text-navy-500">Proje “planlandı” durumunda oluşturulur. Hiçbir tahsilat kaydı otomatik oluşturulmaz.</p>
       <div className="flex justify-end">

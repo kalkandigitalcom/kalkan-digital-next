@@ -20,7 +20,6 @@ export interface RecurringDefaults {
   nextRenewalDate?: string;
   status?: string;
   autoRenew?: boolean;
-  paymentTermDays?: number;
   notes?: string | null;
 }
 
@@ -57,15 +56,6 @@ export function RecurringForm({
         <MoneyField name="amount" label="Tekrarlanan ücret" required defaultValue={defaults.amount?.replace(".", ",") ?? ""} />
         <SelectField name="currency" label="Para birimi" options={currencies.list} defaultValue={defaults.currency ?? "TRY"} />
         <SelectField name="period" label="Periyot" options={recurringPeriods.list} defaultValue={defaults.period ?? "yearly"} />
-        <TextField
-          name="paymentTermDays"
-          type="number"
-          min={0}
-          max={365}
-          label="Son ödeme (gün)"
-          hint="Yenileme tarihinden kaç gün sonra ödeme vadesi dolar."
-          defaultValue={String(defaults.paymentTermDays ?? 0)}
-        />
       </FormSection>
       <FormSection title="Tarihler" description={billed ? "Faturalandırılmış dönemler olduğu için sonraki yenileme tarihi, son faturalandırılan dönemden sonra olmalıdır." : "Sonraki yenileme boş bırakılırsa başlangıç tarihi kullanılır."}>
         <TextField name="startDate" type="date" label="Başlangıç tarihi" required defaultValue={defaults.startDate ?? ""} />

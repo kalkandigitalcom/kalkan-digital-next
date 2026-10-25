@@ -6,6 +6,8 @@
  *  - Receivables        = income,  status=pending   (not yet collected; never counted as income)
  *  - Paid expense       = expense, status=completed, by settled_date
  *  - Payables           = expense, status=pending
+ *  - Overdue            = pending AND due_date set AND due_date < today. Pending items WITHOUT a due
+ *                         date are open but never overdue (the document date is not a due date).
  *  - Net cash movement  = collected income − paid expense (same period)
  *  - Project profitability (estimate) = agreed amount − estimated cost  (project currency)
  *  - Project cash result               = collected − paid expenses linked to the project (base)
@@ -80,15 +82,23 @@ export interface OpenItems {
   missingRateCount: number;
 }
 
-/** Pending (uncollected / unpaid) items as of `today`. Due date falls back to transaction date. */
+/**
+ * SQL condition: a (pending) transaction is overdue only if it has a due date and that date has
+ * passed. Items without a due date are never overdue. Use this everywhere overdue is evaluated.
+ */
+export function isOverdueSql(today: string) {
+  return sql`(${ft.dueDate} is not null and ${ft.dueDate} < ${today})`;
+}
+
+/** Pending (uncollected / unpaid) items as of `today`; overdue per isOverdueSql. */
 export async function openItems(q: Q, base: Currency, type: "income" | "expense", today: string, extra?: SQL): Promise<OpenItems> {
-  const due = sql`coalesce(${ft.dueDate}, ${ft.transactionDate})`;
+  const overdue = isOverdueSql(today);
   const [row] = await q
     .select({
       total: sumBase,
       count: countAll,
-      overdueTotal: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${due} < ${today}), 0)::text`,
-      overdueCount: sql<number>`count(*) filter (where ${due} < ${today})::int`,
+      overdueTotal: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${overdue}), 0)::text`,
+      overdueCount: sql<number>`count(*) filter (where ${overdue})::int`,
       missing: countMissing,
     })
     .from(ft)
@@ -196,12 +206,12 @@ export async function totalsByCurrency(q: Q, base: Currency, from: string, to: s
     .orderBy(ft.type, ft.currency);
 }
 
-/** Receivables ageing buckets based on due date (fallback: transaction date). */
+/** Receivables ageing buckets by due date. Items without a due date are never overdue (notDue bucket). */
 export async function receivablesAgeing(q: Q, base: Currency, today: string) {
-  const due = sql`coalesce(${ft.dueDate}, ${ft.transactionDate})`;
+  const due = sql`${ft.dueDate}`;
   const [row] = await q
     .select({
-      notDue: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${due} >= ${today}), 0)::text`,
+      notDue: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${due} is null or ${due} >= ${today}), 0)::text`,
       d0_30: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${due} < ${today} and ${due} >= ${addDays(today, -30)}), 0)::text`,
       d31_90: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${due} < ${addDays(today, -30)} and ${due} >= ${addDays(today, -90)}), 0)::text`,
       d90p: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${due} < ${addDays(today, -90)}), 0)::text`,
@@ -270,7 +280,7 @@ export interface CustomerIncomeTotals {
   /** Open receivable (income, pending), base currency. */
   receivable: string;
   receivableCount: number;
-  /** Part of the receivable whose due date (fallback: transaction date) is before `today`. */
+  /** Part of the receivable that is overdue (due date set and before `today`, see isOverdueSql). */
   overdue: string;
   overdueCount: number;
   /** Non-cancelled income in a foreign currency without an exchange rate (excluded from the sums above). */
@@ -301,19 +311,19 @@ const ZERO_CUSTOMER_TOTALS: CustomerIncomeTotals = {
 export async function customerIncomeTotals(q: Q, base: Currency, today: string, customerIds: string[]): Promise<Map<string, CustomerIncomeTotals>> {
   const out = new Map<string, CustomerIncomeTotals>();
   if (customerIds.length === 0) return out;
-  const due = sql`coalesce(${ft.dueDate}, ${ft.transactionDate})`;
+  const overdue = isOverdueSql(today);
   const rows = await q
     .select({
       customerId: ft.customerId,
       collected: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${ft.status} = 'completed'), 0)::text`,
       receivable: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${ft.status} = 'pending'), 0)::text`,
       receivableCount: sql<number>`count(*) filter (where ${ft.status} = 'pending')::int`,
-      overdue: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${ft.status} = 'pending' and ${due} < ${today}), 0)::text`,
-      overdueCount: sql<number>`count(*) filter (where ${ft.status} = 'pending' and ${due} < ${today})::int`,
+      overdue: sql<string>`coalesce(sum(${ft.baseAmount}) filter (where ${ft.status} = 'pending' and ${overdue}), 0)::text`,
+      overdueCount: sql<number>`count(*) filter (where ${ft.status} = 'pending' and ${overdue})::int`,
       missingRateCount: countMissing,
       collectedMissingRate: sql<number>`count(*) filter (where ${ft.baseAmount} is null and ${ft.status} = 'completed')::int`,
       receivableMissingRate: sql<number>`count(*) filter (where ${ft.baseAmount} is null and ${ft.status} = 'pending')::int`,
-      overdueMissingRate: sql<number>`count(*) filter (where ${ft.baseAmount} is null and ${ft.status} = 'pending' and ${due} < ${today})::int`,
+      overdueMissingRate: sql<number>`count(*) filter (where ${ft.baseAmount} is null and ${ft.status} = 'pending' and ${overdue})::int`,
     })
     .from(ft)
     .where(

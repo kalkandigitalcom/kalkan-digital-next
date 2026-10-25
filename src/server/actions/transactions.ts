@@ -35,7 +35,6 @@ const txSchema = z
     currency: v.enumOf(currency.enumValues),
     exchangeRate: v.optionalRate(),
     exchangeRateSource: v.optionalText(120),
-    transactionDate: v.isoDate("İşlem tarihi zorunludur."),
     dueDate: v.optionalIsoDate(),
     settledDate: v.optionalIsoDate(),
     status: v.enumOf(transactionStatus.enumValues),
@@ -43,14 +42,23 @@ const txSchema = z
     projectId: v.optionalUuid(),
     categoryId: z.string().refine((s) => z.uuid().safeParse(s).success, "Kategori seçin."),
     paymentMethod: v.optionalEnumOf(paymentMethod.enumValues),
-    documentNo: v.optionalText(80),
     notes: v.optionalText(5000),
   })
-  .transform((d) => ({
-    ...d,
-    // A completed transaction always has a cash date; default it to the document date.
-    settledDate: d.status === "completed" ? (d.settledDate ?? d.transactionDate) : null,
-  }));
+  .superRefine((d, ctx) => {
+    // A completed transaction always has a cash date (DB constraint ft_completed_has_settled_date).
+    if (d.status === "completed" && !d.settledDate)
+      ctx.addIssue({ code: "custom", path: ["settledDate"], message: d.type === "income" ? "Tahsilat tarihini girin." : "Ödeme tarihini girin." });
+  })
+  .transform((d) => ({ ...d, settledDate: d.status === "completed" ? d.settledDate : null }));
+
+/**
+ * The document / transaction date is no longer entered in the UI. New records get it automatically:
+ * the cash date for completed items, otherwise the recording date (today). It remains the fallback
+ * due date for pending items without an explicit due date. Existing records keep their stored value.
+ */
+function newTransactionDate(d: TxInput) {
+  return d.status === "completed" && d.settledDate ? d.settledDate : todayIso();
+}
 
 type TxInput = z.output<typeof txSchema>;
 
@@ -83,7 +91,6 @@ function values(d: TxInput, base: Awaited<ReturnType<typeof getBaseCurrency>>, c
     exchangeRate: b.exchangeRate,
     exchangeRateSource: d.currency === base ? null : d.exchangeRate ? (d.exchangeRateSource ?? "Manuel giriş") : null,
     baseAmount: b.baseAmount,
-    transactionDate: d.transactionDate,
     dueDate: d.dueDate,
     settledDate: d.settledDate,
     status: d.status,
@@ -91,7 +98,6 @@ function values(d: TxInput, base: Awaited<ReturnType<typeof getBaseCurrency>>, c
     projectId: d.projectId,
     categoryId: d.categoryId,
     paymentMethod: d.paymentMethod,
-    documentNo: d.documentNo,
     notes: d.notes,
   };
 }
@@ -112,7 +118,7 @@ export async function createTransactionAction(_prev: ActionState, formData: Form
   try {
     const [row] = await db
       .insert(financialTransactions)
-      .values({ ...values(parsed.data, base, rel.customerId), createdBy: admin.id })
+      .values({ ...values(parsed.data, base, rel.customerId), transactionDate: newTransactionDate(parsed.data), createdBy: admin.id })
       .returning({ id: financialTransactions.id });
     id = row!.id;
     await logActivity({

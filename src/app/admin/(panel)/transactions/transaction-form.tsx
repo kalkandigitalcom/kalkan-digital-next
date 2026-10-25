@@ -17,7 +17,6 @@ export interface TxDefaults {
   currency?: string;
   exchangeRate?: string | null;
   exchangeRateSource?: string | null;
-  transactionDate?: string;
   dueDate?: string | null;
   settledDate?: string | null;
   status?: "completed" | "pending" | "cancelled";
@@ -25,7 +24,6 @@ export interface TxDefaults {
   projectId?: string | null;
   categoryId?: string;
   paymentMethod?: string | null;
-  documentNo?: string | null;
   notes?: string | null;
 }
 
@@ -127,23 +125,21 @@ export function TransactionForm({
           value={status}
           onChange={(e) => setStatus(e.target.value as typeof status)}
         />
-        <TextField name="transactionDate" type="date" label="İşlem / belge tarihi" required defaultValue={defaults.transactionDate ?? today} />
         {status === "completed" ? (
           <TextField
             name="settledDate"
             type="date"
             label={type === "income" ? "Tahsilat tarihi" : "Ödeme tarihi"}
+            required
             max={today}
-            defaultValue={defaults.settledDate ?? ""}
-            hint="Boş bırakılırsa işlem tarihi kullanılır."
+            defaultValue={defaults.settledDate ?? today}
           />
         ) : null}
         {status === "pending" ? (
-          <TextField name="dueDate" type="date" label="Vade / beklenen tarih" defaultValue={defaults.dueDate ?? ""} hint="Gecikme takibi bu tarihe göre yapılır." />
+          <TextField name="dueDate" type="date" label="Vade / beklenen tarih" defaultValue={defaults.dueDate ?? ""} hint="Gecikme bu tarihe göre hesaplanır. Boş bırakılırsa kayıt gecikmiş sayılmaz." />
         ) : (
           <input type="hidden" name="dueDate" value={defaults.dueDate ?? ""} />
         )}
-        <TextField name="documentNo" label="Fatura / belge no" defaultValue={defaults.documentNo ?? ""} />
       </FormSection>
 
       <FormSection title="İlişkiler">

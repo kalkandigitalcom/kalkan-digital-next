@@ -171,7 +171,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
               <p className="mb-2 text-xs font-semibold text-navy-600">Alacak yaşlandırma (vade tarihine göre)</p>
               <dl className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
                 {[
-                  ["Vadesi gelmemiş", r.ageing.notDue],
+                  ["Vadesi gelmemiş / vadesiz", r.ageing.notDue],
                   ["0–30 gün", r.ageing.d0_30],
                   ["31–90 gün", r.ageing.d31_90],
                   ["90+ gün", r.ageing.d90p],

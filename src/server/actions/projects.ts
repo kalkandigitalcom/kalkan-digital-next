@@ -22,10 +22,8 @@ const projectSchema = z
     projectType: v.enumOf(serviceType.enumValues),
     description: v.optionalText(5000),
     startDate: v.optionalIsoDate(),
-    targetDate: v.optionalIsoDate(),
     deliveredDate: v.optionalIsoDate(),
     currency: v.enumOf(currency.enumValues),
-    quotedAmount: v.optionalMoney(),
     agreedAmount: v.optionalMoney(),
     estimatedCost: v.optionalMoney(),
     status: v.enumOf(projectStatus.enumValues),
@@ -33,8 +31,6 @@ const projectSchema = z
     internalNotes: v.optionalText(10000),
   })
   .superRefine((d, ctx) => {
-    if (d.startDate && d.targetDate && d.targetDate < d.startDate)
-      ctx.addIssue({ code: "custom", path: ["targetDate"], message: "Hedef teslim tarihi başlangıçtan önce olamaz." });
     if (d.startDate && d.deliveredDate && d.deliveredDate < d.startDate)
       ctx.addIssue({ code: "custom", path: ["deliveredDate"], message: "Teslim tarihi başlangıçtan önce olamaz." });
   });

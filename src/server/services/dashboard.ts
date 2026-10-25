@@ -52,7 +52,8 @@ export async function getDashboard(range: DateRange) {
         amount: ft.amount,
         currency: ft.currency,
         status: ft.status,
-        date: sql<string>`coalesce(${ft.settledDate}, ${ft.transactionDate})`,
+        // Completed: cash date; pending: due date (null = no due date); cancelled: none.
+        date: sql<string | null>`case ${ft.status} when 'completed' then ${ft.settledDate} when 'pending' then ${ft.dueDate} end`,
         customerName: customers.companyName,
         category: financialCategories.name,
       })
@@ -83,14 +84,15 @@ export async function getDashboard(range: DateRange) {
         customerName: customers.companyName,
         total: sql<string>`coalesce(sum(${ft.baseAmount}), 0)::text`,
         count: sql<number>`count(*)::int`,
-        oldestDue: sql<string>`min(coalesce(${ft.dueDate}, ${ft.transactionDate}))::text`,
+        /** Earliest due date; null when none of the open items has a due date. */
+        oldestDue: sql<string | null>`min(${ft.dueDate})::text`,
         missing: sql<number>`count(*) filter (where ${ft.baseAmount} is null)::int`,
       })
       .from(ft)
       .innerJoin(customers, eq(customers.id, ft.customerId))
       .where(and(eq(ft.type, "income"), eq(ft.status, "pending"), eq(ft.baseCurrency, base)))
       .groupBy(customers.id, customers.companyName)
-      .orderBy(sql`min(coalesce(${ft.dueDate}, ${ft.transactionDate})) asc`)
+      .orderBy(sql`min(${ft.dueDate}) asc nulls last`, customers.companyName)
       .limit(6),
     db
       .select({

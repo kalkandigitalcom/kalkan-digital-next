@@ -57,7 +57,7 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
         </p>
       ) : null}
       <Card>
-        <FilterBar basePath={BASE} params={params} searchPlaceholder="Açıklama, belge no, not…">
+        <FilterBar basePath={BASE} params={params} searchPlaceholder="Açıklama, not…">
           <FilterSelect name="type" label="Tip" value={params.type} options={[{ value: "income", label: "Gelir" }, { value: "expense", label: "Gider" }]} />
           <FilterSelect
             name="status"
@@ -80,7 +80,6 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
             value={params.dateField}
             allLabel={null}
             options={[
-              { value: "transaction", label: "İşlem tarihi" },
               { value: "settled", label: "Tahsilat/ödeme tarihi" },
               { value: "due", label: "Vade tarihi" },
             ]}
@@ -106,19 +105,19 @@ export default async function TransactionsPage({ searchParams }: { searchParams:
               </THead>
               <TBody>
                 {rows.map((t) => {
-                  const dueRef = t.dueDate ?? t.transactionDate;
-                  const overdue = t.status === "pending" && dueRef < today;
+                  // Overdue only with a due date in the past; pending items without a due date are never overdue.
+                  const overdue = t.status === "pending" && t.dueDate !== null && t.dueDate < today;
                   return (
                     <TR key={t.id}>
                       <TD className="tabular whitespace-nowrap text-xs">
-                        {formatDate(t.settledDate ?? t.transactionDate)}
-                        {t.status === "pending" ? <div className={overdue ? "font-semibold text-red-600" : "text-navy-400"}>Vade {formatDate(dueRef)}</div> : null}
+                        {t.status === "completed" ? formatDate(t.settledDate) : null}
+                        {t.status === "pending" ? <div className={overdue ? "font-semibold text-red-600" : "text-navy-400"}>{t.dueDate ? `Vade ${formatDate(t.dueDate)}` : "Vadesiz"}</div> : null}
+                        {t.status === "cancelled" ? <span className="text-navy-300">—</span> : null}
                       </TD>
                       <TD>
                         <Link href={`${BASE}/${t.id}/edit`} className="font-medium text-navy-900 hover:text-brand-600">{t.description}</Link>
                         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-navy-400">
                           <span>{t.categoryName}</span>
-                          {t.documentNo ? <span>· {t.documentNo}</span> : null}
                           {t.isRecurring ? <span className="inline-flex items-center gap-0.5 text-brand-600"><Repeat className="size-3" /> Yenileme</span> : null}
                         </div>
                       </TD>

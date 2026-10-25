@@ -31,9 +31,7 @@ export interface WsProject {
   projectType: (typeof projects.$inferSelect)["projectType"];
   description: string | null;
   startDate: string | null;
-  targetDate: string | null;
   deliveredDate: string | null;
-  quotedAmount: string | null;
   estimatedCost: string | null;
   internalNotes: string | null;
   status: (typeof projects.$inferSelect)["status"];
@@ -61,8 +59,8 @@ export interface WsTx {
   amount: string;
   currency: CurrencyCode;
   baseAmount: string | null;
-  /** Pending: due date (fallback: transaction date). Completed: settled date. */
-  date: string;
+  /** Pending: due date (null = no due date, never overdue). Completed: settled date. */
+  date: string | null;
   projectName: string | null;
 }
 
@@ -161,9 +159,7 @@ export async function listWorkspace(p: Record<string, string | undefined>) {
             projectType: projects.projectType,
             description: projects.description,
             startDate: projects.startDate,
-            targetDate: projects.targetDate,
             deliveredDate: projects.deliveredDate,
-            quotedAmount: projects.quotedAmount,
             estimatedCost: projects.estimatedCost,
             internalNotes: projects.internalNotes,
             status: projects.status,
@@ -216,16 +212,16 @@ export async function listWorkspace(p: Record<string, string | undefined>) {
             amount: sql<string>`x.amount::text`,
             currency: sql<CurrencyCode>`x.currency`,
             baseAmount: sql<string | null>`x.base_amount::text`,
-            date: sql<string>`x.d::text`,
+            date: sql<string | null>`x.d::text`,
             projectName: sql<string | null>`x.project_name`,
           })
           .from(
             sql`(
               select t.id, t.customer_id, t.description, t.amount, t.currency, t.base_amount, p.name as project_name,
                      case when t.status = 'pending' then 'open' else 'paid' end as kind,
-                     case when t.status = 'pending' then coalesce(t.due_date, t.transaction_date) else t.settled_date end as d,
+                     case when t.status = 'pending' then t.due_date else t.settled_date end as d,
                      row_number() over (partition by t.customer_id, t.status
-                       order by case when t.status = 'pending' then coalesce(t.due_date, t.transaction_date) end asc,
+                       order by case when t.status = 'pending' then t.due_date end asc nulls last,
                                 case when t.status = 'completed' then t.settled_date end desc, t.created_at desc) as rn
               from ${ft} t
               left join ${projects} p on p.id = t.project_id
@@ -233,7 +229,7 @@ export async function listWorkspace(p: Record<string, string | undefined>) {
             ) x`,
           )
           .where(sql`x.kind = 'open' or x.rn <= 5`)
-          .orderBy(sql`x.d`),
+          .orderBy(sql`x.d asc nulls last`),
       ])
     : [new Map<string, CustomerIncomeTotals>(), [], [], [], [], []];
 
@@ -272,9 +268,7 @@ export async function listWorkspace(p: Record<string, string | undefined>) {
         projectType: p.projectType,
         description: p.description,
         startDate: p.startDate,
-        targetDate: p.targetDate,
         deliveredDate: p.deliveredDate,
-        quotedAmount: p.quotedAmount,
         estimatedCost: p.estimatedCost,
         internalNotes: p.internalNotes,
         status: p.status,

@@ -24,7 +24,6 @@ const customerSchema = z.object({
   customerType: v.enumOf(customerType.enumValues),
   status: v.enumOf(customerStatus.enumValues),
   source: v.optionalEnumOf(acquisitionSource.enumValues),
-  firstContactDate: v.optionalIsoDate(),
   notes: v.optionalText(5000),
 });
 
@@ -53,7 +52,8 @@ export async function createCustomerAction(_prev: ActionState, formData: FormDat
   try {
     const [row] = await db
       .insert(customers)
-      .values({ ...data, firstContactDate: data.firstContactDate ?? todayIso() })
+      // İlk iletişim tarihi artık formda yok; yeni kayıtlarda önceki varsayılan (bugün) korunur.
+      .values({ ...data, firstContactDate: todayIso() })
       .returning({ id: customers.id });
     id = row!.id;
     await logActivity({ userId: admin.id, action: "customer.create", entityType: "customer", entityId: id, summary: data.companyName });
