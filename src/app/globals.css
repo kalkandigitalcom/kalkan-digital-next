@@ -71,8 +71,8 @@
  * - .motion-intro-group: children rise in one after another on page load (pure CSS, no JS needed).
  * - .motion-intro: a single element rising in on load; delay via --intro-delay.
  * - [data-reveal] / [data-reveal-group]: revealed once when scrolled into view (see ScrollReveal).
- *   Content is only hidden while html[data-reveal-on] is set, which an inline script adds and
- *   removes again if the observer never starts – so content is never left invisible without JS.
+ *   Nothing is hidden until ScrollReveal has run (it sets html[data-reveal-on] after marking the
+ *   on-screen elements), so content stays visible without JS or while JS is still loading.
  * - .motion-press: subtle press feedback on primary calls to action.
  */
 @media (prefers-reduced-motion: no-preference) {
@@ -92,17 +92,17 @@
   html[data-reveal-on] [data-reveal-group]:not([data-revealed]) > * {
     opacity: 0;
   }
-  html[data-reveal-on] [data-reveal][data-revealed],
-  html[data-reveal-on] [data-reveal-group][data-revealed] > * {
+  html[data-reveal-on] [data-reveal][data-revealed="anim"],
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > * {
     animation: ui-rise 0.8s var(--ease-premium) backwards;
   }
-  html[data-reveal-on] [data-reveal-group][data-revealed] > :nth-child(2) { animation-delay: 70ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed] > :nth-child(3) { animation-delay: 140ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed] > :nth-child(4) { animation-delay: 210ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed] > :nth-child(5) { animation-delay: 280ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed] > :nth-child(6) { animation-delay: 350ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed] > :nth-child(7) { animation-delay: 420ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed] > :nth-child(n + 8) { animation-delay: 490ms; }
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(2) { animation-delay: 70ms; }
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(3) { animation-delay: 140ms; }
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(4) { animation-delay: 210ms; }
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(5) { animation-delay: 280ms; }
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(6) { animation-delay: 350ms; }
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(7) { animation-delay: 420ms; }
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(n + 8) { animation-delay: 490ms; }
 
   .motion-press {
     transition-property: color, background-color, border-color, box-shadow, scale;

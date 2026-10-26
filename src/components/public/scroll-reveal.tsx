@@ -1,45 +1,52 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
-/**
- * Inline bootstrap (runs before the page content is parsed): enables the hide-until-revealed
- * styles only when JavaScript runs, and switches them off again if the observer below has not
- * started within 4 s (e.g. the JS bundle failed to load) – content is never left hidden.
- */
-export const SCROLL_REVEAL_BOOTSTRAP =
-  "(function(){var r=document.documentElement;r.setAttribute('data-reveal-on','');setTimeout(function(){if(!r.hasAttribute('data-reveal-ready'))r.removeAttribute('data-reveal-on')},4000)})();";
+const TARGETS = "[data-reveal]:not([data-revealed]), [data-reveal-group]:not([data-revealed])";
 
 /**
  * Reveals `[data-reveal]` / `[data-reveal-group]` elements once, the first time they scroll into
- * view. One shared IntersectionObserver per page; revealed elements are unobserved immediately,
- * so scrolling back never replays the animation. All visual work is done in CSS (globals.css).
+ * view. All visual work is done in CSS (globals.css); this only toggles attributes.
+ *
+ * Nothing is ever hidden before this runs: the server HTML is fully visible, so slow or missing
+ * JavaScript never hides content. On mount, elements already on screen are marked
+ * `data-revealed="static"` (shown as they are, no animation); only after that is
+ * `html[data-reveal-on]` set, which hides the remaining (off-screen) elements until they scroll
+ * into view and get `data-revealed="anim"`. Revealed elements are unobserved immediately, so
+ * scrolling back never replays the animation. After a client-side navigation the hiding styles
+ * are already active, so on-screen elements of the new page rise in instead of popping in.
  */
 export function ScrollReveal() {
   const pathname = usePathname();
+  const firstRun = useRef(true);
 
   useEffect(() => {
+    if (!("IntersectionObserver" in window)) return;
     const root = document.documentElement;
-    if (!("IntersectionObserver" in window)) {
-      root.removeAttribute("data-reveal-on");
-      return;
+    const targets = Array.from(document.querySelectorAll(TARGETS));
+
+    // Already on screen (or scrolled past): shown as is on first load, animated after navigation.
+    const onScreen = firstRun.current ? "static" : "anim";
+    firstRun.current = false;
+    for (const el of targets) {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight) el.setAttribute("data-revealed", r.bottom > 0 ? onScreen : "static");
     }
-    root.setAttribute("data-reveal-ready", "");
+    root.setAttribute("data-reveal-on", "");
 
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          // Reveal when visible, or right away if it is already above the viewport (restored scroll).
           if (entry.isIntersecting || entry.boundingClientRect.bottom < 0) {
-            entry.target.setAttribute("data-revealed", "");
+            entry.target.setAttribute("data-revealed", entry.isIntersecting ? "anim" : "static");
             io.unobserve(entry.target);
           }
         }
       },
       { rootMargin: "0px 0px -8% 0px" },
     );
-    document.querySelectorAll("[data-reveal]:not([data-revealed]), [data-reveal-group]:not([data-revealed])").forEach((el) => io.observe(el));
+    for (const el of targets) if (!el.hasAttribute("data-revealed")) io.observe(el);
     return () => io.disconnect();
   }, [pathname]);
 
