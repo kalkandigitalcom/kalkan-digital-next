@@ -30,7 +30,7 @@ import { listPublishedPortfolio } from "@/server/services/portfolio";
 import { getPublicContact, waHref } from "@/server/public";
 import { processSteps, reasons, sectors, services } from "@/lib/content";
 import { site } from "@/lib/site";
-import { ReferenceLogos } from "@/components/public/project-card";
+import { FeaturedProjectsMarquee } from "@/components/public/featured-projects-marquee";
 import { yearOf, todayIso } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
@@ -192,16 +192,19 @@ export default async function HomePage() {
               <Link href="/projeler" className="inline-flex items-center gap-2 text-sm font-bold text-brand-600 hover:text-brand-700">Tüm projeler <ArrowRight className="size-4" /></Link>
             ) : null}
           </div>
-          {projects.length > 0 ? (
-            <ReferenceLogos items={projects} className="mt-12" />
-          ) : (
+          {projects.length === 0 ? (
             <div className="mt-12 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
               <p className="font-display text-lg font-bold text-navy-900">Proje vitrinimizi güncelliyoruz.</p>
               <p className="mx-auto mt-2 max-w-lg text-sm text-navy-500">Sektörünüze yakın örnek çalışmalarımızı görüşmemizde sizinle paylaşmaktan memnuniyet duyarız.</p>
               <Link href="/iletisim#teklif" className="mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-navy-900 px-5 text-sm font-bold text-white hover:bg-navy-800">Görüşme planlayalım <ArrowRight className="size-4" /></Link>
             </div>
-          )}
+          ) : null}
         </div>
+        {projects.length > 0 ? (
+          <div className="mx-auto mt-12 max-w-[1920px]">
+            <FeaturedProjectsMarquee items={projects} />
+          </div>
+        ) : null}
       </section>
 
       {/* 6. Process */}
