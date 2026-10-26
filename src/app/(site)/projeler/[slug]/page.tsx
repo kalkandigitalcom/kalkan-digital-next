@@ -31,14 +31,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   return (
     <article>
       <header className="bg-navy-900 pb-16 pt-36">
-        <div className="container-page max-w-4xl">
+        <div className="container-page motion-intro-group max-w-4xl">
           <Link href="/projeler" className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-200 hover:text-white"><ArrowLeft className="size-4" /> Tüm projeler</Link>
           <p className="mt-6 text-sm font-semibold text-brand-300">{serviceTypes.label(p.category)}{p.year ? ` · ${p.year}` : ""}</p>
           <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">{p.title}</h1>
           {p.clientName ? <p className="mt-3 text-navy-200">{p.clientName}</p> : null}
         </div>
       </header>
-      <div className="container-page max-w-4xl py-14">
+      <div data-reveal className="container-page max-w-4xl py-14">
         {p.imagePath ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={`/media/${p.imagePath}`} alt={p.title} className="mb-10 w-full rounded-2xl border border-navy-100 object-cover shadow-lift" />
@@ -52,9 +52,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         ) : null}
         <div className="mt-10 flex flex-wrap gap-3">
           {p.liveUrl ? (
-            <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-12 items-center gap-2 rounded-xl bg-navy-900 px-6 text-sm font-bold text-white hover:bg-navy-800">Siteyi ziyaret et <ExternalLink className="size-4" /></a>
+            <a href={p.liveUrl} target="_blank" rel="noopener noreferrer" className="motion-press inline-flex h-12 items-center gap-2 rounded-xl bg-navy-900 px-6 text-sm font-bold text-white hover:bg-navy-800">Siteyi ziyaret et <ExternalLink className="size-4" /></a>
           ) : null}
-          <Link href="/iletisim#teklif" className="inline-flex h-12 items-center rounded-xl bg-brand-600 px-6 text-sm font-bold text-white hover:bg-brand-700">Benzer bir proje için teklif alın</Link>
+          <Link href="/iletisim#teklif" className="motion-press inline-flex h-12 items-center rounded-xl bg-brand-600 px-6 text-sm font-bold text-white hover:bg-brand-700">Benzer bir proje için teklif alın</Link>
         </div>
       </div>
     </article>

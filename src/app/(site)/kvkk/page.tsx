@@ -9,12 +9,12 @@ export default async function KvkkPage() {
   return (
     <>
       <section className="bg-navy-900 pb-14 pt-36">
-        <div className="container-page max-w-3xl">
+        <div className="container-page motion-intro-group max-w-3xl">
           <h1 className="font-display text-4xl font-extrabold tracking-tight text-white">KVKK aydınlatma metni</h1>
         </div>
       </section>
       <section className="py-14">
-        <div className="container-page max-w-3xl space-y-5 leading-relaxed text-navy-700">
+        <div data-reveal className="container-page max-w-3xl space-y-5 leading-relaxed text-navy-700">
           <p>
             {c.companyName} olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında, web sitemizdeki iletişim ve teklif formu aracılığıyla
             paylaştığınız ad soyad, firma, e-posta, telefon ve mesaj içeriği bilgilerinizi yalnızca talebinize dönüş yapmak, teklif hazırlamak ve

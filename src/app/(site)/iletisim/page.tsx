@@ -19,14 +19,14 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
   return (
     <>
       <section className="bg-navy-900 pb-16 pt-36">
-        <div className="container-page">
+        <div className="container-page motion-intro-group">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-300">İletişim</p>
           <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Birlikte çalışalım</h1>
           <p className="mt-4 max-w-2xl text-navy-200">Formu doldurun veya doğrudan ulaşın. Talebinizi inceleyip size en kısa sürede dönüş yapalım.</p>
         </div>
       </section>
       <section className="py-16">
-        <div className="container-page grid gap-10 lg:grid-cols-[1fr_1.6fr]">
+        <div data-reveal-group className="container-page grid gap-10 lg:grid-cols-[1fr_1.6fr]">
           <aside className="space-y-4">
             {wa ? (
               <a href={wa} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 transition hover:shadow-lift">

@@ -49,7 +49,7 @@ function ReferenceLogo({ p }: { p: PublicProject }) {
 /** Minimal logo wall for published portfolio items; each logo links to its existing project page. */
 export function ReferenceLogos({ items, className = "" }: { items: PublicProject[]; className?: string }) {
   return (
-    <ul className={`flex flex-wrap justify-center gap-3 sm:gap-4 ${className}`}>
+    <ul data-reveal-group className={`flex flex-wrap justify-center gap-3 sm:gap-4 ${className}`}>
       {items.map((p) => (
         <li key={p.id} className="w-[calc(50%-0.375rem)] sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]">
           <ReferenceLogo p={p} />

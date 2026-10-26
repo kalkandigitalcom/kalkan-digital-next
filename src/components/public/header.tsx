@@ -57,7 +57,7 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="hidden lg:block">
-          <Link href="/iletisim#teklif" className="inline-flex h-11 items-center rounded-xl bg-brand-600 px-5 text-sm font-bold text-white shadow-[0_8px_24px_-8px_rgba(27,78,245,0.6)] transition hover:bg-brand-700">
+          <Link href="/iletisim#teklif" className="motion-press inline-flex h-11 items-center rounded-xl bg-brand-600 px-5 text-sm font-bold text-white shadow-[0_8px_24px_-8px_rgba(27,78,245,0.6)] transition hover:bg-brand-700">
             Teklif Al
           </Link>
         </div>
@@ -72,7 +72,7 @@ export function SiteHeader() {
           {open ? <X className="size-6" /> : <Menu className="size-6" />}
         </button>
       </div>
-      <div id="mobile-menu" hidden={!open} className="border-t border-navy-100 bg-white lg:hidden">
+      <div id="mobile-menu" hidden={!open} className="border-t border-navy-100 bg-white motion-safe:animate-menu-in lg:hidden">
         <nav className="container-page flex flex-col py-3" aria-label="Mobil menü">
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} className="rounded-lg px-2 py-3 text-base font-semibold text-navy-800 hover:bg-navy-50">

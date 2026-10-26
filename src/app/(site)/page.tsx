@@ -48,7 +48,7 @@ const ICONS: Record<string, LucideIcon> = {
 
 function SectionHeading({ eyebrow, title, text, light }: { eyebrow: string; title: string; text?: string; light?: boolean }) {
   return (
-    <div className="mx-auto max-w-2xl text-center">
+    <div data-reveal className="mx-auto max-w-2xl text-center">
       <p className={`text-xs font-bold uppercase tracking-[0.18em] ${light ? "text-brand-300" : "text-brand-600"}`}>{eyebrow}</p>
       <h2 className={`mt-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl ${light ? "text-white" : "text-navy-900"}`}>{title}</h2>
       {text ? <p className={`mt-4 text-base leading-relaxed ${light ? "text-navy-200" : "text-navy-500"}`}>{text}</p> : null}
@@ -83,7 +83,7 @@ export default async function HomePage() {
         <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60rem_40rem_at_80%_-10%,rgba(27,78,245,0.45),transparent_60%),radial-gradient(40rem_30rem_at_0%_100%,rgba(27,78,245,0.18),transparent_60%)]" />
         <div aria-hidden className="absolute inset-0 -z-10 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.6)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
         <div className="container-page grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="animate-slide-up">
+          <div className="motion-intro-group">
             <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-navy-100">
               <span className="size-1.5 rounded-full bg-brand-400" aria-hidden /> Kalkan, Kaş · {site.foundedYear}&apos;den beri
             </p>
@@ -95,17 +95,17 @@ export default async function HomePage() {
               İşletmeniz için modern web siteleri, özel yazılım çözümleri ve dijital büyüme odaklı hizmetler geliştiriyoruz.
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Link href="/projeler" className="inline-flex h-13 items-center justify-center gap-2 rounded-xl bg-brand-600 px-7 text-base font-bold text-white shadow-[0_12px_32px_-10px_rgba(27,78,245,0.8)] transition hover:bg-brand-500">
+              <Link href="/projeler" className="motion-press inline-flex h-13 items-center justify-center gap-2 rounded-xl bg-brand-600 px-7 text-base font-bold text-white shadow-[0_12px_32px_-10px_rgba(27,78,245,0.8)] transition hover:bg-brand-500">
                 Projeleri İncele <ArrowRight className="size-4" aria-hidden />
               </Link>
-              <Link href="/iletisim#teklif" className="inline-flex h-13 items-center justify-center rounded-xl border border-white/20 bg-white/5 px-7 text-base font-bold text-white transition hover:bg-white/10">
+              <Link href="/iletisim#teklif" className="motion-press inline-flex h-13 items-center justify-center rounded-xl border border-white/20 bg-white/5 px-7 text-base font-bold text-white transition hover:bg-white/10">
                 Teklif Al
               </Link>
             </div>
           </div>
 
           {/* Decorative product visual (no data, no claims) */}
-          <div aria-hidden className="relative hidden lg:block">
+          <div aria-hidden className="motion-intro relative hidden [--intro-delay:420ms] lg:block">
             <div className="absolute -inset-8 rounded-[2rem] bg-brand-600/20 blur-3xl" />
             <div className="relative rounded-2xl border border-white/10 bg-white/[0.06] p-3 shadow-2xl backdrop-blur">
               <div className="flex items-center gap-1.5 px-2 pb-3">
@@ -143,7 +143,7 @@ export default async function HomePage() {
       {/* 3. Experience since 2018 */}
       <section className="relative -mt-12 pb-8">
         <div className="container-page">
-          <div className="grid gap-px overflow-hidden rounded-2xl border border-navy-100 bg-navy-100 shadow-lift sm:grid-cols-2 lg:grid-cols-4">
+          <div data-reveal className="grid gap-px overflow-hidden rounded-2xl border border-navy-100 bg-navy-100 shadow-lift sm:grid-cols-2 lg:grid-cols-4">
             {[
               { k: `${years}+ yıl`, v: `${site.foundedYear}'den beri dijital projeler` },
               { k: "Kalkan, Kaş", v: "Bölgeyi tanıyan yerel ekip" },
@@ -163,7 +163,7 @@ export default async function HomePage() {
       <section id="hizmetler" className="scroll-mt-24 py-24">
         <div className="container-page">
           <SectionHeading eyebrow="Hizmetler" title="İşletmenizin dijital ihtiyaçları, tek çatı altında" text="Web sitenizden rezervasyon altyapınıza, reklamlarınızdan içerik üretiminize kadar yanınızdayız." />
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div data-reveal-group className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {services.map((s) => {
               const Icon = ICONS[s.icon]!;
               return (
@@ -183,7 +183,7 @@ export default async function HomePage() {
       {/* 5. Featured projects */}
       <section id="projeler" className="scroll-mt-24 bg-surface py-24">
         <div className="container-page">
-          <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+          <div data-reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-600">Öne çıkan projeler</p>
               <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">Hayata geçirdiğimiz çalışmalar</h2>
@@ -193,7 +193,7 @@ export default async function HomePage() {
             ) : null}
           </div>
           {projects.length === 0 ? (
-            <div className="mt-12 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
+            <div data-reveal className="mt-12 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
               <p className="font-display text-lg font-bold text-navy-900">Proje vitrinimizi güncelliyoruz.</p>
               <p className="mx-auto mt-2 max-w-lg text-sm text-navy-500">Sektörünüze yakın örnek çalışmalarımızı görüşmemizde sizinle paylaşmaktan memnuniyet duyarız.</p>
               <Link href="/iletisim#teklif" className="mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-navy-900 px-5 text-sm font-bold text-white hover:bg-navy-800">Görüşme planlayalım <ArrowRight className="size-4" /></Link>
@@ -201,7 +201,7 @@ export default async function HomePage() {
           ) : null}
         </div>
         {projects.length > 0 ? (
-          <div className="mx-auto mt-12 max-w-[1920px]">
+          <div data-reveal className="mx-auto mt-12 max-w-[1920px]">
             <FeaturedProjectsMarquee items={projects} />
           </div>
         ) : null}
@@ -211,7 +211,7 @@ export default async function HomePage() {
       <section id="surec" className="scroll-mt-24 py-24">
         <div className="container-page">
           <SectionHeading eyebrow="Çalışma süreci" title="Fikirden yayına, net ve planlı bir süreç" />
-          <ol className="mt-14 grid gap-5 md:grid-cols-5">
+          <ol data-reveal-group className="mt-14 grid gap-5 md:grid-cols-5">
             {processSteps.map((s, i) => (
               <li key={s.title} className="relative rounded-2xl border border-navy-100 bg-white p-6">
                 <span className="font-display text-sm font-extrabold text-brand-600">{String(i + 1).padStart(2, "0")}</span>
@@ -227,7 +227,7 @@ export default async function HomePage() {
       <section id="neden-biz" className="scroll-mt-24 bg-navy-900 py-24">
         <div className="container-page">
           <SectionHeading light eyebrow="Neden Kalkan Digital?" title="Teknolojiyi işinizin diliyle konuşuyoruz" />
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div data-reveal-group className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reasons.map((r) => {
               const Icon = ICONS[r.icon]!;
               return (
@@ -246,7 +246,7 @@ export default async function HomePage() {
       <section className="py-24">
         <div className="container-page">
           <SectionHeading eyebrow="Sektörler" title="Çalıştığımız sektörler" text="Özellikle turizm ve hizmet sektöründeki işletmelerin dijital ihtiyaçlarına odaklanıyoruz." />
-          <ul className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <ul data-reveal-group className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
             {sectors.map((s) => {
               const Icon = ICONS[s.icon]!;
               return (
@@ -263,7 +263,7 @@ export default async function HomePage() {
       {/* 9. CTA */}
       <section className="pb-24">
         <div className="container-page">
-          <div className="relative overflow-hidden rounded-3xl bg-brand-600 px-6 py-14 sm:px-14">
+          <div data-reveal className="relative overflow-hidden rounded-3xl bg-brand-600 px-6 py-14 sm:px-14">
             <div aria-hidden className="absolute -right-24 -top-24 size-80 rounded-full bg-white/10 blur-2xl" />
             <div className="relative grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
               <div>
@@ -276,9 +276,9 @@ export default async function HomePage() {
                 </ul>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-                <Link href="/iletisim#teklif" className="inline-flex h-13 items-center justify-center rounded-xl bg-white px-7 text-base font-bold text-brand-700 hover:bg-brand-50">Teklif Al</Link>
+                <Link href="/iletisim#teklif" className="motion-press inline-flex h-13 items-center justify-center rounded-xl bg-white px-7 text-base font-bold text-brand-700 hover:bg-brand-50">Teklif Al</Link>
                 {wa ? (
-                  <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex h-13 items-center justify-center gap-2 rounded-xl border border-white/30 px-7 text-base font-bold text-white hover:bg-white/10">
+                  <a href={wa} target="_blank" rel="noopener noreferrer" className="motion-press inline-flex h-13 items-center justify-center gap-2 rounded-xl border border-white/30 px-7 text-base font-bold text-white hover:bg-white/10">
                     <MessageCircle className="size-5" aria-hidden /> WhatsApp
                   </a>
                 ) : null}
