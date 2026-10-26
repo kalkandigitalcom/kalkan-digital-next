@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { getPublicContact, waHref } from "@/server/public";
+import { SplitWords } from "@/components/public/split-words";
 import { ContactForm } from "@/components/public/contact-form";
 import { serviceTypes } from "@/lib/labels";
 
@@ -19,9 +20,9 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
   return (
     <>
       <section className="bg-navy-900 pb-16 pt-36">
-        <div className="container-page motion-intro-group">
+        <div className="container-page intro">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-300">İletişim</p>
-          <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Birlikte çalışalım</h1>
+          <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl"><SplitWords text="Birlikte çalışalım" /></h1>
           <p className="mt-4 max-w-2xl text-navy-200">Formu doldurun veya doğrudan ulaşın. Talebinizi inceleyip size en kısa sürede dönüş yapalım.</p>
         </div>
       </section>

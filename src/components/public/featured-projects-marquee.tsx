@@ -31,7 +31,7 @@ function subscribeMotion(cb: () => void) {
 const prefersReducedMotion = () => window.matchMedia(REDUCED_MOTION).matches;
 
 const reveal =
-  "transition-[filter,opacity,color] duration-500 ease-out motion-reduce:transition-none group-hover:opacity-100 group-hover:grayscale-0 group-focus-visible:opacity-100 group-focus-visible:grayscale-0 group-active:opacity-100 group-active:grayscale-0";
+  "transition-[filter,opacity,color,scale] duration-500 ease-out motion-reduce:transition-none group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0 group-focus-visible:opacity-100 group-focus-visible:grayscale-0 group-active:opacity-100 group-active:grayscale-0";
 
 function ProjectCard({ p, clone }: { p: FeaturedProject; clone: boolean }) {
   const brand = p.clientName ?? p.title;
@@ -42,7 +42,7 @@ function ProjectCard({ p, clone }: { p: FeaturedProject; clone: boolean }) {
       aria-hidden={clone || undefined}
       tabIndex={clone ? -1 : undefined}
       draggable={false}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-navy-100 bg-white outline-none transition-[border-color,box-shadow] duration-300 hover:border-navy-200 hover:shadow-lift focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-navy-100 bg-white outline-none transition-[border-color,box-shadow,translate,scale] duration-500 hover:-translate-y-1 hover:border-navy-200 hover:shadow-lift active:scale-[0.985] focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
     >
       <div className="flex h-32 items-center justify-center border-b border-navy-100/70 px-8">
         {p.logoPath ? (
@@ -63,13 +63,13 @@ function ProjectCard({ p, clone }: { p: FeaturedProject; clone: boolean }) {
       </div>
       <div className="flex flex-1 items-start justify-between gap-3 px-5 py-4">
         <div className="min-w-0">
-          <h3 className="truncate font-display text-[15px] font-bold text-navy-900">{p.title}</h3>
+          <h3 className="truncate font-display text-[15px] font-bold text-navy-900 transition-colors duration-500 group-hover:text-brand-700">{p.title}</h3>
           <p className="mt-1 truncate text-xs text-navy-400">
             {serviceTypes.label(p.category)}
             {p.year ? ` · ${p.year}` : ""}
           </p>
         </div>
-        <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-navy-300 transition-colors duration-300 group-hover:text-brand-600" aria-hidden />
+        <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-navy-300 transition-[color,translate] duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-brand-600" aria-hidden />
       </div>
     </Link>
   );

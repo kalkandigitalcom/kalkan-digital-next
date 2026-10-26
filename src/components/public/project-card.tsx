@@ -16,7 +16,7 @@ export interface PublicProject {
  * touch screens logos stay muted and only light up while pressed (`active:`) – never permanently.
  */
 const reveal =
-  "transition-[filter,opacity,color] duration-500 ease-out motion-reduce:transition-none group-hover:opacity-100 group-hover:grayscale-0 group-focus-visible:opacity-100 group-focus-visible:grayscale-0 group-active:opacity-100 group-active:grayscale-0";
+  "transition-[filter,opacity,color,scale] duration-500 ease-out motion-reduce:transition-none group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0 group-focus-visible:opacity-100 group-focus-visible:grayscale-0 group-active:opacity-100 group-active:grayscale-0";
 
 function ReferenceLogo({ p }: { p: PublicProject }) {
   const brand = p.clientName ?? p.title;
@@ -24,7 +24,7 @@ function ReferenceLogo({ p }: { p: PublicProject }) {
     <Link
       href={`/projeler/${p.slug}`}
       title={p.clientName && p.clientName !== p.title ? `${p.title} · ${p.clientName}` : p.title}
-      className="group flex h-28 items-center justify-center rounded-2xl border border-navy-100 bg-white px-6 outline-none transition-colors duration-500 hover:border-navy-200 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:h-32 sm:px-8"
+      className="group flex h-28 items-center justify-center overflow-hidden rounded-2xl border border-navy-100 bg-white px-6 outline-none transition-[border-color,translate,box-shadow,scale] duration-500 hover:-translate-y-0.5 hover:border-navy-200 hover:shadow-card active:scale-[0.985] focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:h-32 sm:px-8"
     >
       {p.logoPath ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -49,7 +49,7 @@ function ReferenceLogo({ p }: { p: PublicProject }) {
 /** Minimal logo wall for published portfolio items; each logo links to its existing project page. */
 export function ReferenceLogos({ items, className = "" }: { items: PublicProject[]; className?: string }) {
   return (
-    <ul data-reveal-group className={`flex flex-wrap justify-center gap-3 sm:gap-4 ${className}`}>
+    <ul data-reveal-group="logos" className={`flex flex-wrap justify-center gap-3 sm:gap-4 ${className}`}>
       {items.map((p) => (
         <li key={p.id} className="w-[calc(50%-0.375rem)] sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]">
           <ReferenceLogo p={p} />

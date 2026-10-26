@@ -31,6 +31,7 @@ import { getPublicContact, waHref } from "@/server/public";
 import { processSteps, reasons, sectors, services } from "@/lib/content";
 import { site } from "@/lib/site";
 import { FeaturedProjectsMarquee } from "@/components/public/featured-projects-marquee";
+import { SplitWords, Word } from "@/components/public/split-words";
 import { yearOf, todayIso } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
@@ -48,10 +49,10 @@ const ICONS: Record<string, LucideIcon> = {
 
 function SectionHeading({ eyebrow, title, text, light }: { eyebrow: string; title: string; text?: string; light?: boolean }) {
   return (
-    <div data-reveal className="mx-auto max-w-2xl text-center">
-      <p className={`text-xs font-bold uppercase tracking-[0.18em] ${light ? "text-brand-300" : "text-brand-600"}`}>{eyebrow}</p>
-      <h2 className={`mt-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl ${light ? "text-white" : "text-navy-900"}`}>{title}</h2>
-      {text ? <p className={`mt-4 text-base leading-relaxed ${light ? "text-navy-200" : "text-navy-500"}`}>{text}</p> : null}
+    <div data-reveal="story" className="mx-auto max-w-2xl text-center">
+      <p className={`rv-eyebrow text-xs font-bold uppercase tracking-[0.18em] ${light ? "text-brand-300" : "text-brand-600"}`}>{eyebrow}</p>
+      <h2 className={`mt-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl ${light ? "text-white" : "text-navy-900"}`}><SplitWords text={title} /></h2>
+      {text ? <p className={`rv-text mt-4 text-base leading-relaxed ${light ? "text-navy-200" : "text-navy-500"}`}>{text}</p> : null}
     </div>
   );
 }
@@ -83,20 +84,20 @@ export default async function HomePage() {
         <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60rem_40rem_at_80%_-10%,rgba(27,78,245,0.45),transparent_60%),radial-gradient(40rem_30rem_at_0%_100%,rgba(27,78,245,0.18),transparent_60%)]" />
         <div aria-hidden className="absolute inset-0 -z-10 opacity-[0.07] [background-image:linear-gradient(rgba(255,255,255,.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.6)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
         <div className="container-page grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="motion-intro-group">
+          <div className="intro hero-recede">
             <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold text-navy-100">
               <span className="size-1.5 rounded-full bg-brand-400" aria-hidden /> Kalkan, Kaş · {site.foundedYear}&apos;den beri
             </p>
             <h1 className="mt-6 font-display text-[2.6rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[4.1rem]">
-              Dijitalde güçlü <br className="hidden sm:block" />
-              bir <span className="bg-gradient-to-r from-brand-300 to-brand-500 bg-clip-text text-transparent">iz bırakın.</span>
+              <Word index={0}>Dijitalde</Word><Word index={1}>güçlü</Word><br className="hidden sm:block" />
+              <Word index={2}>bir</Word><Word index={3} className="bg-gradient-to-r from-brand-300 to-brand-500 bg-clip-text text-transparent">iz bırakın.</Word>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-navy-200">
               İşletmeniz için modern web siteleri, özel yazılım çözümleri ve dijital büyüme odaklı hizmetler geliştiriyoruz.
             </p>
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Link href="/projeler" className="motion-press inline-flex h-13 items-center justify-center gap-2 rounded-xl bg-brand-600 px-7 text-base font-bold text-white shadow-[0_12px_32px_-10px_rgba(27,78,245,0.8)] transition hover:bg-brand-500">
-                Projeleri İncele <ArrowRight className="size-4" aria-hidden />
+            <div className="intro-cta mt-10 flex flex-col gap-3 sm:flex-row">
+              <Link href="/projeler" className="motion-press group inline-flex h-13 items-center justify-center gap-2 rounded-xl bg-brand-600 px-7 text-base font-bold text-white shadow-[0_12px_32px_-10px_rgba(27,78,245,0.8)] transition hover:bg-brand-500">
+                Projeleri İncele <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
               </Link>
               <Link href="/iletisim#teklif" className="motion-press inline-flex h-13 items-center justify-center rounded-xl border border-white/20 bg-white/5 px-7 text-base font-bold text-white transition hover:bg-white/10">
                 Teklif Al
@@ -105,9 +106,9 @@ export default async function HomePage() {
           </div>
 
           {/* Decorative product visual (no data, no claims) */}
-          <div aria-hidden className="motion-intro relative hidden [--intro-delay:420ms] lg:block">
+          <div aria-hidden className="intro-visual relative hidden lg:block">
             <div className="absolute -inset-8 rounded-[2rem] bg-brand-600/20 blur-3xl" />
-            <div className="relative rounded-2xl border border-white/10 bg-white/[0.06] p-3 shadow-2xl backdrop-blur">
+            <div className="par-slow relative rounded-2xl border border-white/10 bg-white/[0.06] p-3 shadow-2xl backdrop-blur">
               <div className="flex items-center gap-1.5 px-2 pb-3">
                 <span className="size-2.5 rounded-full bg-white/20" /><span className="size-2.5 rounded-full bg-white/20" /><span className="size-2.5 rounded-full bg-white/20" />
                 <span className="ml-3 h-5 flex-1 rounded-md bg-white/10" />
@@ -130,7 +131,7 @@ export default async function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="absolute -bottom-8 -left-10 w-56 rounded-xl border border-white/10 bg-navy-800/90 p-4 shadow-2xl backdrop-blur">
+            <div className="intro-float par-fast absolute -bottom-8 -left-10 w-56 rounded-xl border border-white/10 bg-navy-800/90 p-4 shadow-2xl backdrop-blur">
               <div className="flex items-center gap-3">
                 <span className="grid size-9 place-items-center rounded-lg bg-brand-600"><Gauge className="size-5 text-white" /></span>
                 <div className="space-y-1.5"><div className="h-2.5 w-24 rounded bg-white/70" /><div className="h-2 w-16 rounded bg-white/30" /></div>
@@ -143,7 +144,7 @@ export default async function HomePage() {
       {/* 3. Experience since 2018 */}
       <section className="relative -mt-12 pb-8">
         <div className="container-page">
-          <div data-reveal className="grid gap-px overflow-hidden rounded-2xl border border-navy-100 bg-navy-100 shadow-lift sm:grid-cols-2 lg:grid-cols-4">
+          <div data-reveal="strip" className="grid gap-px overflow-hidden rounded-2xl border border-navy-100 bg-navy-100 shadow-lift sm:grid-cols-2 lg:grid-cols-4">
             {[
               { k: `${years}+ yıl`, v: `${site.foundedYear}'den beri dijital projeler` },
               { k: "Kalkan, Kaş", v: "Bölgeyi tanıyan yerel ekip" },
@@ -167,8 +168,8 @@ export default async function HomePage() {
             {services.map((s) => {
               const Icon = ICONS[s.icon]!;
               return (
-                <article key={s.key} className="group rounded-2xl border border-navy-100 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lift">
-                  <span className="grid size-12 place-items-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white">
+                <article key={s.key} className="group rounded-2xl border border-navy-100 bg-white p-6 transition-[translate,border-color,box-shadow] duration-500 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lift">
+                  <span className="rv-icon grid size-12 place-items-center rounded-xl bg-brand-50 text-brand-600 transition-[background-color,color,scale] duration-500 group-hover:scale-[1.06] group-hover:bg-brand-600 group-hover:text-white">
                     <Icon className="size-6" aria-hidden />
                   </span>
                   <h3 className="mt-5 font-display text-base font-bold text-navy-900">{s.title}</h3>
@@ -183,13 +184,13 @@ export default async function HomePage() {
       {/* 5. Featured projects */}
       <section id="projeler" className="scroll-mt-24 bg-surface py-24">
         <div className="container-page">
-          <div data-reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+          <div data-reveal="story" className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-600">Öne çıkan projeler</p>
-              <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">Hayata geçirdiğimiz çalışmalar</h2>
+              <p className="rv-eyebrow text-xs font-bold uppercase tracking-[0.18em] text-brand-600">Öne çıkan projeler</p>
+              <h2 className="mt-3 font-display text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl"><SplitWords text="Hayata geçirdiğimiz çalışmalar" /></h2>
             </div>
             {projects.length > 0 ? (
-              <Link href="/projeler" className="inline-flex items-center gap-2 text-sm font-bold text-brand-600 hover:text-brand-700">Tüm projeler <ArrowRight className="size-4" /></Link>
+              <Link href="/projeler" className="rv-late group inline-flex items-center gap-2 text-sm font-bold text-brand-600 hover:text-brand-700">Tüm projeler <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" /></Link>
             ) : null}
           </div>
           {projects.length === 0 ? (
@@ -201,7 +202,7 @@ export default async function HomePage() {
           ) : null}
         </div>
         {projects.length > 0 ? (
-          <div data-reveal className="mx-auto mt-12 max-w-[1920px]">
+          <div data-reveal="from-right" className="mx-auto mt-12 max-w-[1920px]">
             <FeaturedProjectsMarquee items={projects} />
           </div>
         ) : null}
@@ -214,7 +215,7 @@ export default async function HomePage() {
           <ol data-reveal-group className="mt-14 grid gap-5 md:grid-cols-5">
             {processSteps.map((s, i) => (
               <li key={s.title} className="relative rounded-2xl border border-navy-100 bg-white p-6">
-                <span className="font-display text-sm font-extrabold text-brand-600">{String(i + 1).padStart(2, "0")}</span>
+                <span className="rv-num font-display text-sm font-extrabold text-brand-600">{String(i + 1).padStart(2, "0")}</span>
                 <h3 className="mt-3 font-display text-base font-bold text-navy-900">{s.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-navy-500">{s.text}</p>
               </li>
@@ -227,12 +228,12 @@ export default async function HomePage() {
       <section id="neden-biz" className="scroll-mt-24 bg-navy-900 py-24">
         <div className="container-page">
           <SectionHeading light eyebrow="Neden Kalkan Digital?" title="Teknolojiyi işinizin diliyle konuşuyoruz" />
-          <div data-reveal-group className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div data-reveal-group="scale" className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reasons.map((r) => {
               const Icon = ICONS[r.icon]!;
               return (
                 <div key={r.title} className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
-                  <Icon className="size-6 text-brand-400" aria-hidden />
+                  <Icon className="rv-icon size-6 text-brand-400" aria-hidden />
                   <h3 className="mt-4 font-display text-base font-bold text-white">{r.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-navy-200">{r.text}</p>
                 </div>
@@ -246,7 +247,7 @@ export default async function HomePage() {
       <section className="py-24">
         <div className="container-page">
           <SectionHeading eyebrow="Sektörler" title="Çalıştığımız sektörler" text="Özellikle turizm ve hizmet sektöründeki işletmelerin dijital ihtiyaçlarına odaklanıyoruz." />
-          <ul data-reveal-group className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <ul data-reveal-group="chips" className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
             {sectors.map((s) => {
               const Icon = ICONS[s.icon]!;
               return (
@@ -263,19 +264,19 @@ export default async function HomePage() {
       {/* 9. CTA */}
       <section className="pb-24">
         <div className="container-page">
-          <div data-reveal className="relative overflow-hidden rounded-3xl bg-brand-600 px-6 py-14 sm:px-14">
-            <div aria-hidden className="absolute -right-24 -top-24 size-80 rounded-full bg-white/10 blur-2xl" />
+          <div data-reveal="cta" className="relative overflow-hidden rounded-3xl bg-brand-600 px-6 py-14 sm:px-14">
+            <div aria-hidden className="par-view absolute -right-24 -top-24 size-80 rounded-full bg-white/10 blur-2xl" />
             <div className="relative grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
               <div>
-                <h2 className="font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Projenizi konuşalım.</h2>
-                <p className="mt-3 max-w-xl text-brand-50">İhtiyacınızı birkaç cümleyle anlatın; size uygun çözümü ve net bir teklifi hazırlayalım.</p>
-                <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white">
+                <h2 className="font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl"><SplitWords text="Projenizi konuşalım." /></h2>
+                <p className="rv-text mt-3 max-w-xl text-brand-50">İhtiyacınızı birkaç cümleyle anlatın; size uygun çözümü ve net bir teklifi hazırlayalım.</p>
+                <ul className="rv-list mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white">
                   {["Ücretsiz ön görüşme", "Net kapsam ve takvim", "Şeffaf fiyatlandırma"].map((t) => (
                     <li key={t} className="flex items-center gap-2"><CheckCircle2 className="size-4" aria-hidden /> {t}</li>
                   ))}
                 </ul>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
+              <div className="rv-actions flex flex-col gap-3 sm:flex-row lg:justify-end">
                 <Link href="/iletisim#teklif" className="motion-press inline-flex h-13 items-center justify-center rounded-xl bg-white px-7 text-base font-bold text-brand-700 hover:bg-brand-50">Teklif Al</Link>
                 {wa ? (
                   <a href={wa} target="_blank" rel="noopener noreferrer" className="motion-press inline-flex h-13 items-center justify-center gap-2 rounded-xl border border-white/30 px-7 text-base font-bold text-white hover:bg-white/10">

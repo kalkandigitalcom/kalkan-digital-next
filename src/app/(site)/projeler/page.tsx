@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { listPublishedPortfolio } from "@/server/services/portfolio";
+import { SplitWords } from "@/components/public/split-words";
 import { ReferenceLogos } from "@/components/public/project-card";
 
 export const dynamic = "force-dynamic";
@@ -16,9 +17,9 @@ export default async function ProjectsPage() {
   return (
     <>
       <section className="bg-navy-900 pb-16 pt-36">
-        <div className="container-page motion-intro-group">
+        <div className="container-page intro">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-300">Projeler</p>
-          <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Çalışmalarımız</h1>
+          <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl"><SplitWords text="Çalışmalarımız" /></h1>
           <p className="mt-4 max-w-2xl text-navy-200">Müşterilerimiz için hayata geçirdiğimiz web siteleri, yazılımlar ve dijital projeler.</p>
         </div>
       </section>

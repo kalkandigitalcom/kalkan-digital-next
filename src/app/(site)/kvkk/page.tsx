@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getPublicContact } from "@/server/public";
+import { SplitWords } from "@/components/public/split-words";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "KVKK aydınlatma metni", alternates: { canonical: "/kvkk" } };
@@ -9,8 +10,8 @@ export default async function KvkkPage() {
   return (
     <>
       <section className="bg-navy-900 pb-14 pt-36">
-        <div className="container-page motion-intro-group max-w-3xl">
-          <h1 className="font-display text-4xl font-extrabold tracking-tight text-white">KVKK aydınlatma metni</h1>
+        <div className="container-page intro max-w-3xl">
+          <h1 className="font-display text-4xl font-extrabold tracking-tight text-white"><SplitWords text="KVKK aydınlatma metni" /></h1>
         </div>
       </section>
       <section className="py-14">

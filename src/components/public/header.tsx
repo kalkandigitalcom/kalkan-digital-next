@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { cn } from "@/lib/cn";
@@ -18,6 +18,9 @@ const NAV = [
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  // Brief closing state so the menu can fade out (skipped with reduced motion).
+  const [closing, setClosing] = useState(false);
+  const closeTimer = useRef<number | undefined>(undefined);
   const pathname = usePathname();
   const overHero = pathname === "/";
 
@@ -29,6 +32,25 @@ export function SiteHeader() {
   }, []);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- close mobile menu on navigation
   useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+
+  const toggleMenu = () => {
+    window.clearTimeout(closeTimer.current);
+    if (!open) {
+      setClosing(false);
+      setOpen(true);
+      return;
+    }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setOpen(false);
+      return;
+    }
+    setClosing(true);
+    closeTimer.current = window.setTimeout(() => {
+      setOpen(false);
+      setClosing(false);
+    }, 160);
+  };
 
   const dark = overHero && !scrolled && !open;
   return (
@@ -63,16 +85,19 @@ export function SiteHeader() {
         </div>
         <button
           type="button"
-          onClick={() => setOpen((o) => !o)}
+          onClick={toggleMenu}
           className={cn("rounded-lg p-2 lg:hidden", dark ? "text-white" : "text-navy-800")}
           aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
           aria-expanded={open}
           aria-controls="mobile-menu"
         >
-          {open ? <X className="size-6" /> : <Menu className="size-6" />}
+          <span className="relative block size-6">
+            <Menu className={cn("absolute inset-0 size-6 transition-[opacity,scale] duration-300", open && !closing ? "scale-75 opacity-0" : "opacity-100")} aria-hidden />
+            <X className={cn("absolute inset-0 size-6 transition-[opacity,scale] duration-300", open && !closing ? "opacity-100" : "scale-75 opacity-0")} aria-hidden />
+          </span>
         </button>
       </div>
-      <div id="mobile-menu" hidden={!open} className="border-t border-navy-100 bg-white motion-safe:animate-menu-in lg:hidden">
+      <div id="mobile-menu" hidden={!open} data-state={open ? (closing ? "closing" : "open") : "closed"} className="border-t border-navy-100 bg-white lg:hidden">
         <nav className="container-page flex flex-col py-3" aria-label="Mobil menü">
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} className="rounded-lg px-2 py-3 text-base font-semibold text-navy-800 hover:bg-navy-50">

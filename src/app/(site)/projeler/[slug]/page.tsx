@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
+import { SplitWords } from "@/components/public/split-words";
 import { getPublishedBySlug } from "@/server/services/portfolio";
 import { serviceTypes } from "@/lib/labels";
 
@@ -31,14 +32,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   return (
     <article>
       <header className="bg-navy-900 pb-16 pt-36">
-        <div className="container-page motion-intro-group max-w-4xl">
-          <Link href="/projeler" className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-200 hover:text-white"><ArrowLeft className="size-4" /> Tüm projeler</Link>
+        <div className="container-page intro max-w-4xl">
+          <Link href="/projeler" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-navy-200 hover:text-white"><ArrowLeft className="size-4 transition-transform duration-300 group-hover:-translate-x-1" /> Tüm projeler</Link>
           <p className="mt-6 text-sm font-semibold text-brand-300">{serviceTypes.label(p.category)}{p.year ? ` · ${p.year}` : ""}</p>
-          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">{p.title}</h1>
+          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl"><SplitWords text={p.title} /></h1>
           {p.clientName ? <p className="mt-3 text-navy-200">{p.clientName}</p> : null}
         </div>
       </header>
-      <div data-reveal className="container-page max-w-4xl py-14">
+      <div data-reveal-group className="container-page max-w-4xl py-14">
         {p.imagePath ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={`/media/${p.imagePath}`} alt={p.title} className="mb-10 w-full rounded-2xl border border-navy-100 object-cover shadow-lift" />

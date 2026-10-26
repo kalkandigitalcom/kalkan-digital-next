@@ -42,7 +42,6 @@
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
   --default-transition-duration: 200ms;
   --default-transition-timing-function: var(--ease-premium);
-  --animate-menu-in: menu-in 0.32s var(--ease-premium) both;
 }
 
 @keyframes fade-in {
@@ -54,56 +53,229 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes menu-in {
-  from { opacity: 0; transform: translate3d(0, -6px, 0); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes ui-rise {
-  from { opacity: 0; transform: translate3d(0, var(--rise, 20px), 0); }
-  to { opacity: 1; transform: none; }
-}
-
-/*
- * Public site motion layer (animation only; no layout, colour or size changes).
- * Everything lives inside `prefers-reduced-motion: no-preference`, uses only opacity/transform
- * (GPU-composited, no layout shift) and `backwards` fill so final styles are the untouched originals.
+/* ------------------------------------------------------------------------------------------------
+ * Public site motion layer
  *
- * - .motion-intro-group: children rise in one after another on page load (pure CSS, no JS needed).
- * - .motion-intro: a single element rising in on load; delay via --intro-delay.
- * - [data-reveal] / [data-reveal-group]: revealed once when scrolled into view (see ScrollReveal).
- *   Nothing is hidden until ScrollReveal has run (it sets html[data-reveal-on] after marking the
- *   on-screen elements), so content stays visible without JS or while JS is still loading.
- * - .motion-press: subtle press feedback on primary calls to action.
- */
-@media (prefers-reduced-motion: no-preference) {
-  .motion-intro-group > *,
-  .motion-intro {
-    --rise: 16px;
-    animation: ui-rise 0.9s var(--ease-premium) backwards;
-  }
-  .motion-intro { animation-delay: var(--intro-delay, 80ms); }
-  .motion-intro-group > :nth-child(1) { animation-delay: 80ms; }
-  .motion-intro-group > :nth-child(2) { animation-delay: 170ms; }
-  .motion-intro-group > :nth-child(3) { animation-delay: 260ms; }
-  .motion-intro-group > :nth-child(4) { animation-delay: 350ms; }
-  .motion-intro-group > :nth-child(n + 5) { animation-delay: 440ms; }
+ * Animation only: no colour, size or layout changes; when an animation has finished (or never runs)
+ * every element renders exactly as without this layer. Rules:
+ *  - Everything lives inside `prefers-reduced-motion: no-preference`.
+ *  - Only opacity, translate/scale/transform and clip-path are animated (compositor friendly, no
+ *    layout shift); fills are `backwards`, so finished animations leave the original styles.
+ *  - Load (hero) animations are pure CSS and do not depend on JavaScript.
+ *  - Scroll reveals ([data-reveal], [data-reveal-group]) are driven by ScrollReveal: content is only
+ *    hidden after it has run (html[data-reveal-on]) and only below the fold, never on first paint.
+ *  - Scroll-linked effects (parallax, hero recede) use native scroll timelines where supported
+ *    and are simply absent elsewhere.
+ * --------------------------------------------------------------------------------------------- */
+@keyframes k-rise {
+  from { opacity: 0; translate: 0 var(--rise, 28px); }
+}
+@keyframes k-rise-scale {
+  from { opacity: 0; translate: 0 var(--rise, 24px); scale: var(--from-scale, 0.96); }
+}
+@keyframes k-slide-x {
+  from { opacity: 0; translate: var(--dx, 64px) 0; }
+}
+@keyframes k-fade {
+  from { opacity: 0; }
+}
+@keyframes k-word {
+  from { opacity: 0; translate: 0 105%; }
+  40% { opacity: 1; }
+}
+@keyframes k-word-clip {
+  0%, 99.9% { clip-path: inset(-1em -0.5em 0 -0.5em); }
+  100% { clip-path: none; }
+}
+@keyframes k-wipe {
+  from { opacity: 0; clip-path: inset(0 100% 0 0); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); }
+}
+@keyframes k-pop {
+  from { opacity: 0; scale: 0.6; }
+}
+@keyframes k-curtain {
+  from { clip-path: inset(9% 7% 9% 7% round 1rem); scale: 1.06; }
+  to { clip-path: inset(0 round 1rem); scale: 1; }
+}
+@keyframes k-open {
+  from { clip-path: inset(7% 5% 7% 5% round 1.5rem); scale: 0.98; }
+  to { clip-path: inset(0 round 1.5rem); scale: 1; }
+}
+@keyframes k-menu-open {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes k-menu-close {
+  to { opacity: 0; translate: 0 -6px; }
+}
+@keyframes k-parallax {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, var(--par, -60px), 0); }
+}
+@keyframes k-recede {
+  to { transform: translate3d(0, -56px, 0); opacity: 0.3; }
+}
 
+@media (prefers-reduced-motion: no-preference) {
+  /* Word units (SplitWords). Inline-block only while motion is allowed; spacing is unchanged. */
+  .sw {
+    display: inline-block;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+    vertical-align: baseline;
+  }
+  .sw-i,
+  .rv-num { display: inline-block; }
+
+  /* ---- Load: page hero (.intro), no JavaScript involved ---- */
+  .intro > * {
+    --rise: 18px;
+    animation: k-rise 1s var(--ease-premium) backwards;
+  }
+  .intro > :nth-child(1) { animation-delay: 60ms; }
+  .intro > :nth-child(2) { animation-delay: 140ms; }
+  .intro > :nth-child(3) { animation-delay: 560ms; }
+  .intro > :nth-child(4) { animation-delay: 680ms; }
+  .intro > :nth-child(n + 5) { animation-delay: 780ms; }
+  .intro > :has(.sw),
+  .intro > .intro-cta { animation: none; }
+  .intro .sw { animation: k-word-clip 1.15s linear backwards; animation-delay: calc(160ms + var(--w, 0) * 80ms); }
+  .intro .sw-i { animation: k-word 1.15s var(--ease-premium) backwards; animation-delay: calc(160ms + var(--w, 0) * 80ms); }
+  .intro-cta > * {
+    --rise: 14px;
+    --from-scale: 0.96;
+    animation: k-rise-scale 0.9s var(--ease-premium) backwards;
+  }
+  .intro-cta > :nth-child(1) { animation-delay: 700ms; }
+  .intro-cta > :nth-child(n + 2) { animation-delay: 790ms; }
+  .intro-visual {
+    --rise: 44px;
+    --from-scale: 0.94;
+    animation: k-rise-scale 1.5s var(--ease-premium) 360ms backwards;
+  }
+  .intro-float {
+    --rise: 28px;
+    animation: k-rise 1.1s var(--ease-premium) 1000ms backwards;
+  }
+
+  /* ---- Scroll reveals (ScrollReveal sets data-revealed="anim" on first view) ---- */
   html[data-reveal-on] [data-reveal]:not([data-revealed]),
   html[data-reveal-on] [data-reveal-group]:not([data-revealed]) > * {
     opacity: 0;
   }
-  html[data-reveal-on] [data-reveal][data-revealed="anim"],
-  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > * {
-    animation: ui-rise 0.8s var(--ease-premium) backwards;
-  }
-  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(2) { animation-delay: 70ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(3) { animation-delay: 140ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(4) { animation-delay: 210ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(5) { animation-delay: 280ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(6) { animation-delay: 350ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(7) { animation-delay: 420ms; }
-  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > :nth-child(n + 8) { animation-delay: 490ms; }
 
+  /* Single block */
+  html[data-reveal-on] [data-reveal][data-revealed="anim"] {
+    --rise: 36px;
+    animation: k-rise 1.1s var(--ease-premium) backwards;
+  }
+  /* Marquee strip: glides in from the right, in its direction of travel */
+  html[data-reveal-on] [data-reveal="from-right"][data-revealed="anim"] {
+    --dx: 96px;
+    animation: k-slide-x 1.4s var(--ease-premium) backwards;
+  }
+  /* Heading stories: eyebrow wipes in, title words rise from a mask, text follows */
+  html[data-reveal-on] [data-reveal="story"][data-revealed="anim"] { animation: none; }
+  html[data-reveal-on] [data-revealed="anim"] .rv-eyebrow { animation: k-wipe 0.9s var(--ease-premium) backwards; }
+  html[data-reveal-on] [data-revealed="anim"] .sw { animation: k-word-clip 1.1s linear backwards; animation-delay: calc(var(--story-delay, 120ms) + var(--w, 0) * 70ms); }
+  html[data-reveal-on] [data-revealed="anim"] .sw-i { animation: k-word 1.1s var(--ease-premium) backwards; animation-delay: calc(var(--story-delay, 120ms) + var(--w, 0) * 70ms); }
+  html[data-reveal-on] [data-revealed="anim"] .rv-text { --rise: 16px; animation: k-rise 1s var(--ease-premium) 440ms backwards; }
+  html[data-reveal-on] [data-revealed="anim"] .rv-late { --rise: 12px; animation: k-rise 0.9s var(--ease-premium) 560ms backwards; }
+  /* Stats strip: the panel settles, then each cell's figures follow left to right */
+  html[data-reveal-on] [data-reveal="strip"][data-revealed="anim"] > * > * { --rise: 12px; animation: k-rise 0.9s var(--ease-premium) backwards; }
+  html[data-reveal-on] [data-reveal="strip"][data-revealed="anim"] > :nth-child(1) > * { animation-delay: 220ms; }
+  html[data-reveal-on] [data-reveal="strip"][data-revealed="anim"] > :nth-child(2) > * { animation-delay: 320ms; }
+  html[data-reveal-on] [data-reveal="strip"][data-revealed="anim"] > :nth-child(3) > * { animation-delay: 420ms; }
+  html[data-reveal-on] [data-reveal="strip"][data-revealed="anim"] > :nth-child(4) > * { animation-delay: 520ms; }
+  /* Closing call to action: the panel opens from a rounded mask, content follows */
+  html[data-reveal-on] [data-reveal="cta"][data-revealed="anim"] { --story-delay: 320ms; animation: k-open 1.3s var(--ease-premium) backwards; }
+  html[data-reveal-on] [data-reveal="cta"][data-revealed="anim"] .rv-text { animation-delay: 620ms; }
+  html[data-reveal-on] [data-reveal="cta"][data-revealed="anim"] .rv-list > * { --rise: 10px; animation: k-rise 0.8s var(--ease-premium) backwards; }
+  html[data-reveal-on] [data-reveal="cta"][data-revealed="anim"] .rv-list > :nth-child(1) { animation-delay: 740ms; }
+  html[data-reveal-on] [data-reveal="cta"][data-revealed="anim"] .rv-list > :nth-child(2) { animation-delay: 820ms; }
+  html[data-reveal-on] [data-reveal="cta"][data-revealed="anim"] .rv-list > :nth-child(n + 3) { animation-delay: 900ms; }
+  html[data-reveal-on] [data-reveal="cta"][data-revealed="anim"] .rv-actions > * { --rise: 14px; --from-scale: 0.96; animation: k-rise-scale 0.9s var(--ease-premium) 820ms backwards; }
+  html[data-reveal-on] [data-reveal="cta"][data-revealed="anim"] .rv-actions > :nth-child(2) { animation-delay: 900ms; }
+
+  /* Groups: children follow one another; --i is the child's position */
+  [data-reveal-group] > :nth-child(1) { --i: 0; }
+  [data-reveal-group] > :nth-child(2) { --i: 1; }
+  [data-reveal-group] > :nth-child(3) { --i: 2; }
+  [data-reveal-group] > :nth-child(4) { --i: 3; }
+  [data-reveal-group] > :nth-child(5) { --i: 4; }
+  [data-reveal-group] > :nth-child(6) { --i: 5; }
+  [data-reveal-group] > :nth-child(7) { --i: 6; }
+  [data-reveal-group] > :nth-child(8) { --i: 7; }
+  [data-reveal-group] > :nth-child(n + 9) { --i: 8; }
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > * {
+    --rise: 40px;
+    animation: k-rise 1.1s var(--ease-premium) backwards;
+    animation-delay: calc(var(--i, 0) * 90ms);
+  }
+  html[data-reveal-on] [data-reveal-group="scale"][data-revealed="anim"] > * {
+    --rise: 28px;
+    --from-scale: 0.95;
+    animation: k-rise-scale 1.2s var(--ease-premium) backwards;
+    animation-delay: calc(var(--i, 0) * 100ms);
+  }
+  html[data-reveal-on] [data-reveal-group="chips"][data-revealed="anim"] > * {
+    --rise: 16px;
+    animation-duration: 0.8s;
+    animation-delay: calc(var(--i, 0) * 55ms);
+  }
+  html[data-reveal-on] [data-reveal-group="logos"][data-revealed="anim"] > * {
+    --rise: 24px;
+    --from-scale: 0.96;
+    animation: k-rise-scale 1s var(--ease-premium) backwards;
+    animation-delay: calc(var(--i, 0) * 60ms);
+  }
+  /* Details inside group items arrive just after their card */
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] .rv-icon {
+    animation: k-pop 0.9s var(--ease-premium) backwards;
+    animation-delay: calc(var(--i, 0) * 90ms + 280ms);
+  }
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] .rv-num {
+    --dx: -14px;
+    animation: k-slide-x 0.9s var(--ease-premium) backwards;
+    animation-delay: calc(var(--i, 0) * 90ms + 240ms);
+  }
+  /* Project detail: the cover image opens like a curtain */
+  html[data-reveal-on] [data-reveal-group][data-revealed="anim"] > img { animation: k-curtain 1.5s var(--ease-premium) backwards; }
+
+  /* ---- Scroll-linked depth (native scroll timelines only) ---- */
+  @supports (animation-timeline: scroll()) {
+    .par-slow,
+    .par-fast,
+    .hero-recede {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 100vh;
+    }
+    .par-slow { --par: -48px; animation-name: k-parallax; }
+    .par-fast { --par: -110px; animation-name: k-parallax; }
+    .hero-recede { animation-name: k-recede; animation-range: 0 90vh; }
+    .par-view {
+      --par: -64px;
+      animation: k-parallax linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+  }
+
+  /* ---- Mobile menu ---- */
+  #mobile-menu[data-state="open"] { animation: k-menu-open 0.45s var(--ease-premium) both; }
+  #mobile-menu[data-state="open"] nav > * { --rise: 10px; animation: k-rise 0.6s var(--ease-premium) backwards; }
+  #mobile-menu[data-state="open"] nav > :nth-child(1) { animation-delay: 60ms; }
+  #mobile-menu[data-state="open"] nav > :nth-child(2) { animation-delay: 100ms; }
+  #mobile-menu[data-state="open"] nav > :nth-child(3) { animation-delay: 140ms; }
+  #mobile-menu[data-state="open"] nav > :nth-child(4) { animation-delay: 180ms; }
+  #mobile-menu[data-state="open"] nav > :nth-child(5) { animation-delay: 220ms; }
+  #mobile-menu[data-state="open"] nav > :nth-child(n + 6) { animation-delay: 270ms; }
+  #mobile-menu[data-state="closing"] { animation: k-menu-close 0.16s var(--ease-premium) forwards; }
+
+  /* ---- Press feedback on primary calls to action ---- */
   .motion-press {
     transition-property: color, background-color, border-color, box-shadow, scale;
     transition-duration: 200ms;
