@@ -39,7 +39,6 @@ COPY --chown=nextjs:nodejs docker-entrypoint.sh ./docker-entrypoint.sh
 RUN mkdir -p /app/uploads && chown nextjs:nodejs /app/uploads && chmod +x ./docker-entrypoint.sh
 USER nextjs
 EXPOSE 3000
-VOLUME ["/app/uploads"]
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
   CMD wget -qO- http://127.0.0.1:3000/api/health >/dev/null || exit 1
 ENTRYPOINT ["./docker-entrypoint.sh"]

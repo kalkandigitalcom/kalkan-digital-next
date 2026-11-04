@@ -69,7 +69,8 @@ ALLOW_DEV_SEED=true npm run db:seed:dev
 | `ADMIN_SETUP_TOKEN` | | Doluysa ve hiç yönetici yoksa `/admin/setup` açılır. Kurulumdan sonra silin. |
 | `COOKIE_SECURE` | | `auto` (önerilen) / `true` / `false` |
 | `TRUST_PROXY`, `TRUSTED_PROXY_HOPS` | | Reverse proxy arkasında gerçek IP tespiti (Coolify: `true`, `1`) |
-| `UPLOAD_DIR` | | Portfolyo görselleri; Docker'da kalıcı volume'a bağlayın |
+| `UPLOAD_DIR` | | Yüklenen görseller (logo/kapak). Docker'da `/app/uploads`; host'taki `/data/kalkan-uploads` dizinine bağlanır (aşağıya bakın) |
+| `REQUIRE_PERSISTENT_UPLOADS` | | Production'da `true`: `UPLOAD_DIR/.kalkan-persistent` yoksa veya dizin yazılabilir değilse container başlamaz |
 | `RUN_MIGRATIONS` | | `true` ise container başlangıcında migration uygulanır |
 | `DATABASE_POOL_MAX` | | Bağlantı havuzu (varsayılan 10) |
 | `NEXT_PUBLIC_SITE_URL` | | Canonical URL, sitemap (build-time) |
@@ -96,7 +97,7 @@ npm run admin:create  # yönetici oluştur  ·  -- --reset-password ile parola s
 1. **PostgreSQL:** Coolify'da bir PostgreSQL kaynağı oluşturun (veya mevcut sunucunuzu kullanın). Kalıcı volume ve düzenli yedek açık olsun.
 2. **Uygulama:** Coolify › New Resource › Git deposu › Build Pack: **Dockerfile**. Port: `3000`.
 3. **Environment variables:** `.env.example`'daki değerleri girin (`DATABASE_URL`, `SESSION_SECRET` secret olarak). `NEXT_PUBLIC_*` değerlerini **build variable** olarak da işaretleyin.
-4. **Kalıcı depolama:** `/app/uploads` için bir volume ekleyin (portfolyo görselleri).
+4. **Kalıcı depolama:** Persistent Storage › **Directory Mount**: `/data/kalkan-uploads` → `/app/uploads`. Ayrıntılar ve ilk kurulum için **Yüklenen görseller (kalıcı depolama)** bölümüne bakın. `REQUIRE_PERSISTENT_UPLOADS=true` ekleyin.
 5. **Migration:** `RUN_MIGRATIONS=true` ile container her başlangıçta bekleyen migration'ları uygular (ileri yönlü, veri silmez). Alternatif: Coolify "Pre-deployment command" → `node dist-scripts/migrate.mjs`.
 6. **İlk yönetici** (iki yoldan biri):
    - Coolify terminalinden: `node dist-scripts/create-admin.mjs` (etkileşimli) veya `ADMIN_EMAIL=… ADMIN_NAME=… ADMIN_PASSWORD=… node dist-scripts/create-admin.mjs`
@@ -105,6 +106,36 @@ npm run admin:create  # yönetici oluştur  ·  -- --reset-password ile parola s
 8. **Sağlık kontrolü:** `GET /api/health` (Dockerfile HEALTHCHECK tanımlı).
 
 > Mevcut bir production veritabanında: önce yedek alın, `drizzle/` altındaki yeni SQL dosyalarını gözden geçirin, sonra migrate edin. Migration'lar `DROP`/`TRUNCATE` içermez.
+
+## Yüklenen görseller (kalıcı depolama)
+
+Portfolyo logoları ve kapak görselleri harici bir storage'da değil, **Hetzner sunucusunun kalıcı diskinde** tutulur.
+
+| Host (sunucu) | Container | Veritabanı (`portfolio_items.logo_path` / `image_path`) |
+|---|---|---|
+| `/data/kalkan-uploads/logos/<uuid>.png` | `/app/uploads/logos/<uuid>.png` | `logos/<uuid>.png` |
+| `/data/kalkan-uploads/portfolio/<uuid>.jpg` | `/app/uploads/portfolio/<uuid>.jpg` | `portfolio/<uuid>.jpg` |
+| `/data/kalkan-uploads/.kalkan-persistent` | `/app/uploads/.kalkan-persistent` | – (işaret dosyası) |
+
+Dosyalar `/media/<göreli yol>` ile sunulur (`src/app/media/[...path]/route.ts`). Yükleme/silme: `src/server/uploads.ts`.
+
+**Neden bind mount?** Imaj `/app/uploads` için volume tanımlamaz; Coolify'da tanımlı bir Directory Mount yoksa yüklemeler container'ın geçici diskine yazılır ve sonraki deploy'da kaybolur. `REQUIRE_PERSISTENT_UPLOADS=true` iken `docker-entrypoint.sh` işaret dosyasını ve yazma iznini denetler; mount eksikse container başlamaz ve deploy başarısız olur (eski sürüm çalışmaya devam eder).
+
+**İlk kurulum (sunucuda, deploy'dan önce):**
+
+```bash
+sudo mkdir -p /data/kalkan-uploads/logos /data/kalkan-uploads/portfolio
+sudo touch /data/kalkan-uploads/.kalkan-persistent
+sudo chown -R 1001:1001 /data/kalkan-uploads          # container kullanıcısı nextjs (uid 1001)
+sudo find /data/kalkan-uploads -type d -exec chmod 750 {} +
+sudo find /data/kalkan-uploads -type f -exec chmod 640 {} +
+```
+
+Ardından Coolify › Persistent Storage › **Directory Mount** (Volume Mount değil): Source `/data/kalkan-uploads`, Destination `/app/uploads`; ortam değişkeni `REQUIRE_PERSISTENT_UPLOADS=true`.
+
+**Doğrulama:** `docker inspect <container> --format '{{json .Mounts}}'` çıktısında `"Type":"bind"` ve `"Source":"/data/kalkan-uploads"` görünmeli; bir test logosu yükleyip Redeploy/Restart sonrası `/media/...` adresinin hâlâ 200 döndüğünü kontrol edin.
+
+**Yedekleme:** `/data/kalkan-uploads` dizinini veritabanı dökümüyle (`pg_dump`) aynı zamanda, günlük olarak sunucu dışına yedekleyin (ör. restic → Hetzner Storage Box; 7 günlük / 4 haftalık / 6 aylık saklama). Ayda bir geri yükleme testi yapın. Coolify'ın otomatik Docker temizliği bu dizine dokunmaz (bind mount, Docker volume değildir).
 
 ## Güvenlik özeti
 
