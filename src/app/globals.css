@@ -29,6 +29,16 @@
 
   --color-surface: #f7f9fc;
 
+  /* Turquoise accent (villa band, highlights). Text on white uses 600+ for contrast. */
+  --color-aqua-50: #ebfbfc;
+  --color-aqua-100: #cdf4f6;
+  --color-aqua-200: #a0e9ee;
+  --color-aqua-300: #62d8e0;
+  --color-aqua-400: #22c3ce;
+  --color-aqua-500: #0ea7b3;
+  --color-aqua-600: #0b8692;
+  --color-aqua-700: #0f6b75;
+
   --radius-xl: 0.875rem;
   --radius-2xl: 1.125rem;
 
@@ -115,6 +125,17 @@
 }
 @keyframes k-recede {
   to { transform: translate3d(0, -56px, 0); opacity: 0.3; }
+}
+@keyframes k-sync-forward {
+  from { translate: -100% 0; }
+  to { translate: 0 0; }
+}
+@keyframes k-sync-back {
+  from { translate: 100% 0; }
+  to { translate: 0 0; }
+}
+@keyframes k-line-draw {
+  from { scale: var(--line-from, 0 1); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -264,6 +285,13 @@
     }
   }
 
+  /* ---- Home: two-way sync lanes (decorative; static at the destination end without motion) ---- */
+  .sync-run { animation: k-sync-forward 2.4s var(--ease-premium) infinite; }
+  .sync-run.sync-back { animation-name: k-sync-back; animation-delay: 1.2s; }
+
+  /* ---- Home: process connector draws in with the steps (desktop only) ---- */
+  html[data-reveal-on] .process-line[data-revealed="anim"]::before { animation: k-line-draw 1.4s var(--ease-premium) 200ms backwards; }
+
   /* ---- Mobile menu ---- */
   #mobile-menu[data-state="open"] { animation: k-menu-open 0.45s var(--ease-premium) both; }
   #mobile-menu[data-state="open"] nav > * { --rise: 10px; animation: k-rise 0.6s var(--ease-premium) backwards; }
@@ -309,6 +337,31 @@
 }
 
 @layer components {
+  /* Thin connector behind the home process steps: vertical on mobile, horizontal from md. */
+  .process-line::before {
+    content: "";
+    position: absolute;
+    left: 1.25rem;
+    top: 1.25rem;
+    bottom: 1.25rem;
+    width: 1px;
+    background: var(--color-navy-200);
+    transform-origin: top;
+    --line-from: 1 0;
+  }
+  @media (min-width: 48rem) {
+    .process-line::before {
+      left: 1.25rem;
+      /* ends at the last step's marker: one column (5 columns, 1.5rem gaps) minus the marker radius */
+      right: calc((100% - 6rem) / 5 - 1.25rem);
+      top: 1.25rem;
+      bottom: auto;
+      width: auto;
+      height: 1px;
+      transform-origin: left;
+      --line-from: 0 1;
+    }
+  }
   .container-page {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
