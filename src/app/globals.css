@@ -302,6 +302,9 @@
   /* ---- Home: process connector draws in with the steps (desktop only) ---- */
   html[data-reveal-on] .process-line[data-revealed="anim"]::before { animation: k-line-draw 1.4s var(--ease-premium) 200ms backwards; }
 
+  /* ---- Home portfolio: cards rise in after a filter change ---- */
+  .portfolio-grid > li { --rise: 14px; animation: k-rise 0.6s var(--ease-premium) backwards; animation-delay: calc(var(--i, 0) * 45ms); }
+
   /* ---- Mobile menu ---- */
   #mobile-menu[data-state="open"] { animation: k-menu-open 0.45s var(--ease-premium) both; }
   #mobile-menu[data-state="open"] nav > * { --rise: 10px; animation: k-rise 0.6s var(--ease-premium) backwards; }
@@ -348,35 +351,55 @@
 
 @layer components {
   /* Thin connector behind the home process steps: vertical on mobile, horizontal from md. */
-  .process-line::before {
+  /* Mobile: one segment per step, from its marker to the next one (ends at the last marker). */
+  .process-line > li:not(:last-child)::after {
     content: "";
     position: absolute;
-    left: 1.25rem;
-    top: 1.25rem;
-    bottom: 1.25rem;
-    width: 1px;
-    background: var(--color-navy-200);
-    transform-origin: top;
-    --line-from: 1 0;
+    left: calc(1.375rem - 1px);
+    top: 2.75rem;
+    bottom: -1.25rem;
+    width: 2px;
+    background: linear-gradient(180deg, var(--color-brand-600), var(--color-aqua-400));
   }
   @media (min-width: 48rem) {
+    .process-line > li:not(:last-child)::after { display: none; }
     .process-line::before {
-      left: 1.25rem;
-      /* ends at the last step's marker: one column (5 columns, 1.5rem gaps) minus the marker radius */
-      right: calc((100% - 6rem) / 5 - 1.25rem);
-      top: 1.25rem;
+      content: "";
+      position: absolute;
+      border-radius: 2px;
+      left: 1.375rem;
+      /* ends at the last step's marker: one column (5 columns, 1.25rem gaps) minus the marker radius */
+      right: calc((100% - 5rem) / 5 - 1.375rem);
+      top: 1.375rem;
       bottom: auto;
       width: auto;
-      height: 1px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--color-navy-900), var(--color-brand-500) 55%, var(--color-aqua-400));
       transform-origin: left;
       --line-from: 0 1;
     }
+  }
+  /* Process step marker: navy-to-turquoise disc with a light ring that separates it from the line */
+  .process-dot {
+    background: linear-gradient(135deg, var(--color-navy-900) 20%, var(--color-brand-600) 70%, var(--color-aqua-500));
+    box-shadow: 0 0 0 5px var(--color-surface), 0 10px 22px -10px rgb(11 31 58 / 0.6);
+  }
+  .process-card {
+    box-shadow: 0 1px 2px rgb(11 31 58 / 0.04), 0 16px 34px -26px rgb(11 31 58 / 0.35);
   }
   .container-page {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
   .tabular {
     font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (hover: hover) {
+  .process-card:hover {
+    translate: 0 -4px;
+    border-color: var(--color-aqua-200);
+    box-shadow: 0 1px 2px rgb(11 31 58 / 0.04), 0 24px 44px -24px rgb(11 31 58 / 0.4), 0 12px 30px -20px rgb(34 195 206 / 0.35);
   }
 }
 

@@ -2,8 +2,8 @@
  * Home page copy (strategy report v3.2, sections 3.4 and 5.1).
  *
  * Only verified facts: no invented references, durations, prices or features. Online payment is
- * not offered as an existing feature; calendar sync is described as two-way with Airbnb and
- * Booking.com only, without any frequency / "real-time" claim.
+ * not offered as an existing feature; ready calendar sync is two-way with Airbnb and Booking.com,
+ * other platforms only as custom development; no frequency / "real-time" claim.
  */
 
 export const heroTrust = ["2018'den beri", "Villa kiralama sektörüne özel dijital çözümler", "Kurumsal, WordPress ve e-ticaret projeleri"] as const;
@@ -11,14 +11,14 @@ export const heroTrust = ["2018'den beri", "Villa kiralama sektörüne özel dij
 /** Brand message (services intro). */
 export const brandMessage = {
   lead: "Yalnızca uzman olduğumuz alanlarda iş geliştiriyoruz.",
-  text: "Uzmanlık alanımızın dışına çıkmadan, işletmelere gerçek değer katan dijital çözümler geliştiriyoruz.",
+  text: "Uzmanlık alanımızın dışına çıkmadan, işletmelere gerçek değer katan çözümler geliştiriyoruz.",
 } as const;
 
 /** Category A: Web Tasarım ve Dijital Çözümler. `short` is the chip label used in compact lists. */
 export const webServices = [
   { icon: "MonitorSmartphone", title: "Kurumsal Web Tasarım", short: "Kurumsal web tasarım", text: "Markanızı doğru anlatan, hızlı ve SEO altyapılı web siteleri." },
   { icon: "Code2", title: "Özel Web Yazılım", short: "Özel web yazılım", text: "Teklif, takip, rezervasyon ve raporlama için işletmenize özel sistemler." },
-  { icon: "Home", title: "Villa Kiralama Yazılımı", short: "Villa kiralama yazılımı", text: "Villa portföyü, rezervasyon yönetimi, müsaitlik takvimi ve çift yönlü Airbnb & Booking.com takvim eşitleme.", villa: true },
+  { icon: "Home", title: "Villa Kiralama Yazılımı", short: "Villa kiralama yazılımı", text: "Villa portföyü, rezervasyon yönetimi, müsaitlik takvimi ve Airbnb & Booking.com ile çift yönlü takvim eşitleme. Diğer platform entegrasyonları ihtiyaca göre geliştirilir.", villa: true },
   { icon: "ShoppingCart", title: "E-Ticaret", short: "E-ticaret", text: "Ürünlerinizi online satmanız için mağaza, ürün ve sipariş yönetimi." },
   { icon: "ServerCog", title: "Sunucu, Hosting ve Yazılım Altyapısı", short: "Sunucu ve hosting", text: "Güvenilir sunucu altyapısı, hosting, kurulum, optimizasyon, yedekleme ve teknik destek." },
   { icon: "Mail", title: "Kurumsal E-Posta Kurulum ve Yönetimi", short: "Kurumsal e-posta", text: "Şirketinize özel kurumsal e-posta adresleri, kurulum, yapılandırma ve teknik yönetim." },
@@ -40,11 +40,11 @@ export const villaFeatures = [
 ] as const;
 
 export const homeProcess = [
-  { title: "Keşif görüşmesi", text: "İşletmenizi ve hedeflerinizi dinliyoruz." },
-  { title: "Teklif ve plan", text: "Kapsam, takvim ve bütçe yazılı." },
-  { title: "Tasarım", text: "Sayfa yapısı ve görsel tasarım onayınıza sunulur." },
-  { title: "Geliştirme ve içerik", text: "Kurulum, içerik, mobil ve hız testleri. Villa projelerinde fiyat dönemleri ve takvim eşitleme kurulumu." },
-  { title: "Yayın ve destek", text: "Eğitim, hosting ve bakım." },
+  { icon: "MessagesSquare", title: "Keşif görüşmesi", text: "İşletmenizi ve hedeflerinizi dinliyoruz." },
+  { icon: "FileText", title: "Teklif ve plan", text: "Kapsam, takvim ve bütçe yazılı." },
+  { icon: "PenTool", title: "Tasarım", text: "Sayfa yapısı ve görsel tasarım onayınıza sunulur." },
+  { icon: "Code2", title: "Geliştirme ve içerik", text: "Kurulum, içerik, mobil ve hız testleri. Villa projelerinde fiyat dönemleri ve takvim eşitleme kurulumu." },
+  { icon: "Rocket", title: "Yayın ve destek", text: "Eğitim, hosting ve bakım." },
 ] as const;
 
 export const homeReasons = [
@@ -79,7 +79,7 @@ export const homeFaq = [
   },
   {
     q: "Villa sitem Airbnb ve Booking.com takvimimle eşitlenebilir mi?",
-    a: "Evet, çift yönlü. Villa sitenizdeki rezervasyonlar platformların takvimlerine, platformlardaki rezervasyonlar da sitenizin müsaitlik takvimine yansıtılır. Böylece çifte rezervasyon riskini azaltırsınız.",
+    a: "Evet, çift yönlü. Villa sitenizdeki rezervasyonlar platformların takvimlerine, platformlardaki rezervasyonlar da sitenizin müsaitlik takvimine yansıtılır. Böylece çifte rezervasyon riskini azaltırsınız. Diğer rezervasyon platformları veya yerel firmalarla takvim entegrasyonu ise ihtiyacınıza göre projenize özel geliştirilebilir.",
   },
   {
     q: "Villa sitesinden online ödeme alınabilir mi?",

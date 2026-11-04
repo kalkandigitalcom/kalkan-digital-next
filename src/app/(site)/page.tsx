@@ -15,6 +15,10 @@ import {
   MapPin,
   Megaphone,
   MessageCircle,
+  MessagesSquare,
+  FileText,
+  PenTool,
+  Rocket,
   MonitorSmartphone,
   Plus,
   ServerCog,
@@ -30,10 +34,10 @@ import { services } from "@/lib/content";
 import { brandMessage, heroTrust, homeFaq, homeProcess, homeReasons, serviceRegions, villaFeatures, webServiceChips, webServices } from "@/lib/home-content";
 import { serviceTypes } from "@/lib/labels";
 import { site } from "@/lib/site";
-import { FeaturedProjectsMarquee } from "@/components/public/featured-projects-marquee";
 import { SplitWords, Word } from "@/components/public/split-words";
 import { HeroShowcase, type ShowcaseShot } from "@/components/public/home/hero-showcase";
 import { SyncDiagram } from "@/components/public/home/sync-diagram";
+import { PortfolioGrid } from "@/components/public/home/portfolio-grid";
 import { TrustCards } from "@/components/public/home/trust-cards";
 import { yearOf, todayIso } from "@/lib/dates";
 
@@ -47,10 +51,15 @@ export const metadata: Metadata = {
 };
 
 const ICONS: Record<string, LucideIcon> = {
-  MonitorSmartphone, Code2, Home, ShoppingCart, ServerCog, Mail, Megaphone, Share2, CalendarSync, Languages, Coins, CalendarDays, Tags, LayoutGrid, MapPin, ShieldCheck, FileCheck2,
+  MessagesSquare, FileText, PenTool, Rocket, MonitorSmartphone, Code2, Home, ShoppingCart, ServerCog, Mail, Megaphone, Share2, CalendarSync, Languages, Coins, CalendarDays, Tags, LayoutGrid, MapPin, ShieldCheck, FileCheck2,
 };
 
 const VILLA = "villa_rental_software";
+
+/** Text placeholder for a project without a logo (no invented artwork). */
+function initials(name: string) {
+  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]!.toLocaleUpperCase("tr")).join("");
+}
 
 function SectionHeading({ eyebrow, title, text, light, align = "left" }: { eyebrow: string; title: string; text?: string; light?: boolean; align?: "left" | "center" }) {
   return (
@@ -155,7 +164,7 @@ export default async function HomePage() {
             <a href="#villa-yazilimi" className="group relative flex flex-col overflow-hidden rounded-3xl border border-aqua-200 bg-aqua-50 p-8 text-navy-900 outline-none transition-[translate,box-shadow] duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(10,143,156,0.55)] focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:p-10">
               <span className="rv-icon grid size-12 place-items-center rounded-2xl bg-aqua-600 text-white"><Home className="size-6" aria-hidden /></span>
               <h3 className="mt-8 font-display text-2xl font-extrabold tracking-tight sm:text-3xl">Villa Kiralama Yazılımları</h3>
-              <p className="mt-4 max-w-lg leading-relaxed text-navy-600">Kendi markanıza ait villa kiralama sitesi: Airbnb ve Booking.com ile çift yönlü takvim eşitleme, çoklu dil ve para birimi, dönemsel fiyatlar ve rezervasyon yönetimi tek sistemde.</p>
+              <p className="mt-4 max-w-lg leading-relaxed text-navy-600">Kendi markanıza ait villa kiralama sitesi: Airbnb ve Booking.com ile çift yönlü takvim eşitleme, çoklu dil ve para birimi, dönemsel fiyatlar ve rezervasyon yönetimi tek sistemde. Diğer rezervasyon platformlarıyla takvim entegrasyonu ihtiyacınıza göre projenize özel geliştirilir.</p>
               <ul className="mt-7 flex flex-wrap gap-2">
                 {["Villa kiralama sitesi", "Rezervasyon sistemi", "Airbnb ve Booking çift yönlü eşitleme", "Çoklu dil ve para birimi", "Dönemsel fiyatlandırma"].map((t) => (
                   <li key={t} className="rounded-full border border-aqua-200 bg-white px-3 py-1 text-xs font-semibold text-navy-700">{t}</li>
@@ -236,25 +245,34 @@ export default async function HomePage() {
                 </li>
               );
             })}
-            <li className="flex flex-col justify-between gap-6 bg-aqua-500/10 p-6 sm:p-7">
+            <li className="bg-aqua-500/10 p-6 sm:p-7">
               <p className="font-display text-base font-bold text-white">İhtiyaca göre geliştirilebilir</p>
-              <p className="text-sm leading-relaxed text-navy-200">İhtiyaçlarınıza göre online ödeme altyapısı da sisteme özel olarak entegre edilebilir.</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-aqua-300">Projenize özel</p>
+              <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-navy-200">
+                <li>Diğer rezervasyon platformları ve yerel firmalarla takvim entegrasyonu</li>
+                <li>İhtiyaçlarınıza göre online ödeme altyapısı da sisteme özel olarak entegre edilebilir.</li>
+              </ul>
             </li>
           </ul>
 
           {villaProjects.length > 0 ? (
             <div className="mt-14">
-              <p data-reveal className="text-xs font-bold uppercase tracking-[0.18em] text-aqua-300">Canlı villa projeleri</p>
+              <div data-reveal className="flex items-end justify-between gap-4">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-aqua-300">Canlı villa projeleri</p>
+                <Link href="/projeler" className="text-sm font-bold text-navy-200 hover:text-white">Tümü</Link>
+              </div>
               <ul data-reveal-group className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {villaProjects.slice(0, 3).map((p) => (
                   <li key={p.id}>
                     <Link href={`/projeler/${p.slug}`} className="group flex h-full items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition-[border-color,background-color] duration-500 hover:border-aqua-300/40 hover:bg-white/[0.07]">
-                      {p.imagePath ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={`/media/${p.imagePath}`} alt="" loading="lazy" decoding="async" className="size-14 shrink-0 rounded-xl object-cover object-top" />
-                      ) : (
-                        <span className="grid size-14 shrink-0 place-items-center rounded-xl bg-white/10"><Home className="size-5 text-aqua-300" aria-hidden /></span>
-                      )}
+                      <span className="grid h-14 w-20 shrink-0 place-items-center overflow-hidden rounded-xl bg-white p-2">
+                        {p.logoPath ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={`/media/${p.logoPath}`} alt={`${p.clientName ?? p.title} logosu`} loading="lazy" decoding="async" className="max-h-full w-auto max-w-full object-contain" />
+                        ) : (
+                          <span className="font-display text-sm font-extrabold text-navy-900" aria-hidden>{initials(p.clientName ?? p.title)}</span>
+                        )}
+                      </span>
                       <span className="min-w-0">
                         <span className="block truncate font-display text-base font-bold text-white">{p.clientName ?? p.title}</span>
                         {p.summary ? <span className="mt-0.5 line-clamp-2 block text-sm text-navy-300">{p.summary}</span> : null}
@@ -278,42 +296,50 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 6. Selected projects */}
+      {/* 6. References: filterable portfolio */}
       <section id="projeler" className="scroll-mt-24 py-20 sm:py-28">
         <div className="container-page">
           <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
-            <SectionHeading eyebrow="Seçilmiş projeler" title="Hayata geçirdiğimiz çalışmalar" />
+            <SectionHeading eyebrow="Referanslar" title="Kimlerle çalıştık?" text="Farklı sektörlerdeki markalar için geliştirdiğimiz dijital projelerden seçkiler." />
             {projects.length > 0 ? (
-              <Link data-reveal href="/projeler" className="group inline-flex items-center gap-2 text-sm font-bold text-brand-600 hover:text-brand-700">Tüm projeler <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden /></Link>
+              <Link data-reveal href="/projeler" className="group inline-flex shrink-0 items-center gap-2 text-sm font-bold text-brand-600 hover:text-brand-700">Tüm projeler <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden /></Link>
             ) : null}
           </div>
-          {projects.length === 0 ? (
+          {projects.length > 0 ? (
+            <div data-reveal className="mt-10">
+              <PortfolioGrid items={projects} />
+            </div>
+          ) : (
             <div data-reveal className="mt-12 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
               <p className="font-display text-lg font-bold text-navy-900">Proje vitrinimizi güncelliyoruz.</p>
               <p className="mx-auto mt-2 max-w-lg text-sm text-navy-500">Sektörünüze yakın örnek çalışmalarımızı görüşmemizde sizinle paylaşmaktan memnuniyet duyarız.</p>
               <Link href="/iletisim#teklif" className="mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-navy-900 px-5 text-sm font-bold text-white hover:bg-navy-800">Görüşme planlayalım <ArrowRight className="size-4" aria-hidden /></Link>
             </div>
-          ) : null}
+          )}
         </div>
-        {projects.length > 0 ? (
-          <div data-reveal="from-right" className="mx-auto mt-12 max-w-[1920px]">
-            <FeaturedProjectsMarquee items={projects} />
-          </div>
-        ) : null}
       </section>
 
       {/* 7. Process */}
-      <section id="surec" className="scroll-mt-24 bg-surface py-20 sm:py-28">
+      <section id="surec" className="relative isolate scroll-mt-24 overflow-hidden bg-surface py-20 sm:py-28">
+        <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(50rem_24rem_at_100%_0%,rgba(34,195,206,0.10),transparent_65%),radial-gradient(40rem_22rem_at_0%_100%,rgba(27,78,245,0.07),transparent_60%)]" />
         <div className="container-page">
           <SectionHeading eyebrow="Nasıl çalışıyoruz" title="Fikirden yayına, net ve planlı bir süreç" text="Web sitesi, yazılım veya villa kiralama sitesi; beş adım iki kategori için de aynı." />
-          <ol data-reveal-group className="process-line relative mt-14 grid gap-8 md:grid-cols-5 md:gap-6">
-            {homeProcess.map((s, i) => (
-              <li key={s.title} className="relative pl-14 md:pl-0 md:pt-14">
-                <span className="rv-num absolute left-0 top-0 grid size-10 place-items-center rounded-full border border-navy-200 bg-white font-display text-sm font-extrabold text-navy-900">{String(i + 1).padStart(2, "0")}</span>
-                <h3 className="font-display text-base font-bold text-navy-900">{s.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-navy-500">{s.text}</p>
-              </li>
-            ))}
+          <ol data-reveal-group className="process-line relative mt-14 grid gap-5 md:grid-cols-5 md:gap-5">
+            {homeProcess.map((s, i) => {
+              const Icon = ICONS[s.icon]!;
+              return (
+                <li key={s.title} className="relative pl-16 md:pl-0 md:pt-16">
+                  <span className="process-dot rv-num absolute left-0 top-0 grid size-11 place-items-center rounded-full font-display text-sm font-extrabold text-white">{String(i + 1).padStart(2, "0")}</span>
+                  <div className="process-card group h-full rounded-2xl border border-navy-100 bg-white p-5 transition-[translate,box-shadow,border-color] duration-500">
+                    <span className="grid size-10 place-items-center rounded-xl bg-gradient-to-br from-navy-900 to-navy-700 text-aqua-300 transition-[background-color,color] duration-500">
+                      <Icon className="size-5" aria-hidden />
+                    </span>
+                    <h3 className="mt-4 font-display text-base font-bold text-navy-900">{s.title}</h3>
+                    <p className="mt-1.5 text-sm leading-relaxed text-navy-500">{s.text}</p>
+                  </div>
+                </li>
+              );
+            })}
           </ol>
         </div>
       </section>
