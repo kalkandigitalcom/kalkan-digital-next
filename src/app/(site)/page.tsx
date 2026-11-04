@@ -34,6 +34,7 @@ import { FeaturedProjectsMarquee } from "@/components/public/featured-projects-m
 import { SplitWords, Word } from "@/components/public/split-words";
 import { HeroShowcase, type ShowcaseShot } from "@/components/public/home/hero-showcase";
 import { SyncDiagram } from "@/components/public/home/sync-diagram";
+import { TrustCards } from "@/components/public/home/trust-cards";
 import { yearOf, todayIso } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
@@ -164,20 +165,8 @@ export default async function HomePage() {
             </a>
           </div>
 
-          {/* 3. Trust strip */}
-          <dl data-reveal="strip" className="mt-5 grid gap-px overflow-hidden rounded-2xl border border-navy-100 bg-navy-100 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { k: `${years}+ yıl`, v: `${site.foundedYear}'den beri dijital projeler` },
-              { k: "Villa sektörü", v: "Sektöre özel kiralama ve rezervasyon çözümleri" },
-              { k: "Kaş · Kalkan", v: "Yüz yüze görüşebileceğiniz yerel ekip" },
-              { k: "Tek muhatap", v: "Tasarım, yazılım, hosting ve bakım" },
-            ].map((s) => (
-              <div key={s.k} className="bg-white px-6 py-6">
-                <dt className="font-display text-xl font-extrabold text-navy-900">{s.k}</dt>
-                <dd className="mt-1 text-sm text-navy-500">{s.v}</dd>
-              </div>
-            ))}
-          </dl>
+          {/* 3. Trust cards */}
+          <TrustCards years={years} foundedYear={site.foundedYear} />
         </div>
       </section>
 

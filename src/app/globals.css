@@ -54,6 +54,16 @@
   --default-transition-timing-function: var(--ease-premium);
 }
 
+/* Angle of the moving light on the home trust cards (animatable custom property). */
+@property --trust-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes k-trust-spin {
+  to { --trust-angle: 360deg; }
+}
+
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -368,6 +378,60 @@
   .tabular {
     font-variant-numeric: tabular-nums;
   }
+}
+
+/* ---- Home trust cards: soft light background, light ring and lift on hover ----
+ * Hover effects only on devices that can hover (no cost on touch screens); the moving light runs
+ * only while hovered and only without a reduced-motion preference. */
+.trust-card {
+  position: relative;
+  border-radius: 1.25rem;
+  border: 1px solid var(--color-navy-100);
+  padding: 1.5rem 1.5rem 1.75rem;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgb(34 195 206 / 0.09), transparent 55%),
+    radial-gradient(90% 80% at 0% 100%, rgb(27 78 245 / 0.05), transparent 60%),
+    #fff;
+  box-shadow: 0 1px 2px rgb(11 31 58 / 0.04), 0 14px 32px -22px rgb(11 31 58 / 0.3);
+  transition:
+    translate 0.5s var(--ease-premium),
+    box-shadow 0.5s var(--ease-premium),
+    border-color 0.5s var(--ease-premium);
+}
+.trust-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: conic-gradient(from var(--trust-angle), transparent 0deg, var(--color-aqua-400) 70deg, var(--color-brand-500) 140deg, transparent 200deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  transition: opacity 0.5s var(--ease-premium);
+}
+.trust-figure {
+  background: linear-gradient(120deg, var(--color-navy-900) 35%, var(--color-brand-600) 75%, var(--color-aqua-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (hover: hover) {
+  .trust-card:hover {
+    translate: 0 -4px;
+    border-color: transparent;
+    box-shadow:
+      0 1px 2px rgb(11 31 58 / 0.04),
+      0 22px 44px -22px rgb(11 31 58 / 0.4),
+      0 12px 36px -18px rgb(34 195 206 / 0.35);
+  }
+  .trust-card:hover::before { opacity: 1; }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .trust-card::before { animation: k-trust-spin 4.5s linear infinite paused; }
+  .trust-card:hover::before { animation-play-state: running; }
 }
 
 @media (prefers-reduced-motion: reduce) {
