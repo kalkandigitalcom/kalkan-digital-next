@@ -11,13 +11,15 @@ import {
   Home,
   Languages,
   LayoutGrid,
-  LayoutTemplate,
+  Mail,
   MapPin,
+  Megaphone,
   MessageCircle,
   MonitorSmartphone,
   Plus,
   ServerCog,
   ShieldCheck,
+  Share2,
   ShoppingCart,
   Tags,
   type LucideIcon,
@@ -25,7 +27,7 @@ import {
 import { listPublishedPortfolio } from "@/server/services/portfolio";
 import { getPublicContact, waHref } from "@/server/public";
 import { services } from "@/lib/content";
-import { heroTrust, homeFaq, homeProcess, homeReasons, serviceRegions, villaFeatures, webServices } from "@/lib/home-content";
+import { brandMessage, heroTrust, homeFaq, homeProcess, homeReasons, serviceRegions, villaFeatures, webServiceChips, webServices } from "@/lib/home-content";
 import { serviceTypes } from "@/lib/labels";
 import { site } from "@/lib/site";
 import { FeaturedProjectsMarquee } from "@/components/public/featured-projects-marquee";
@@ -44,7 +46,7 @@ export const metadata: Metadata = {
 };
 
 const ICONS: Record<string, LucideIcon> = {
-  MonitorSmartphone, Code2, LayoutTemplate, ShoppingCart, ServerCog, CalendarSync, Languages, Coins, CalendarDays, Tags, LayoutGrid, MapPin, ShieldCheck, FileCheck2,
+  MonitorSmartphone, Code2, Home, ShoppingCart, ServerCog, Mail, Megaphone, Share2, CalendarSync, Languages, Coins, CalendarDays, Tags, LayoutGrid, MapPin, ShieldCheck, FileCheck2,
 };
 
 const VILLA = "villa_rental_software";
@@ -72,7 +74,6 @@ export default async function HomePage() {
   const heroFront = toShot(webProjects.find((p) => p.imagePath)) ?? toShot(villaProjects.find((p) => p.imagePath));
   const heroBackCandidate = toShot(villaProjects.find((p) => p.imagePath));
   const heroBack = heroBackCandidate && heroBackCandidate.imagePath !== heroFront?.imagePath ? heroBackCandidate : null;
-  const webCase = webProjects[0] ?? null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -104,7 +105,7 @@ export default async function HomePage() {
         <div className="container-page grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
           <div className="intro hero-recede">
             <p className="inline-flex items-center gap-2 rounded-full border border-navy-100 bg-white px-3.5 py-1.5 text-xs font-semibold text-navy-600 shadow-card">
-              <span className="size-1.5 rounded-full bg-aqua-500" aria-hidden /> Kaş · Kalkan · Antalya · Muğla
+              <span className="size-1.5 rounded-full bg-aqua-500" aria-hidden /> Kaş · Kalkan · Fethiye · Antalya · Muğla
             </p>
             <h1 className="mt-6 font-display text-[2.5rem] font-extrabold leading-[1.04] tracking-tight text-navy-900 sm:text-6xl lg:text-[3.6rem] xl:text-[4.25rem]">
               <Word index={0}>Web</Word><Word index={1}>tasarım,</Word>
@@ -112,7 +113,7 @@ export default async function HomePage() {
               <Word index={5} className="text-brand-600">dijital</Word><Word index={6} className="text-brand-600">çözümler</Word>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-navy-500">
-              <strong className="font-semibold text-navy-800">Dijitalde güçlü bir iz bırakın.</strong> Kaş ve Kalkan&apos;daki ofisimizden Antalya ve Muğla&apos;daki işletmelere hızlı, mobil uyumlu web siteleri ve iş süreçlerine uygun yazılımlar geliştiriyoruz.
+              <strong className="font-semibold text-navy-800">Dijitalde güçlü bir iz bırakın.</strong> Kaş ve Kalkan&apos;daki ofisimizden Fethiye, Antalya ve Muğla&apos;daki işletmelere hızlı, mobil uyumlu web siteleri ve iş süreçlerine uygun yazılımlar geliştiriyoruz.
             </p>
             <div className="intro-cta mt-9 flex flex-col gap-3 sm:flex-row">
               <Link href="/iletisim#teklif" className="motion-press group inline-flex h-13 items-center justify-center gap-2 rounded-xl bg-navy-900 px-7 text-base font-bold text-white shadow-[0_14px_30px_-12px_rgba(11,31,58,0.7)] hover:bg-navy-800">
@@ -144,9 +145,9 @@ export default async function HomePage() {
             <a href="#web-cozumler" className="group relative flex flex-col overflow-hidden rounded-3xl bg-navy-900 p-8 text-white outline-none transition-[translate,box-shadow] duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(11,31,58,0.8)] focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:p-10">
               <span className="rv-icon grid size-12 place-items-center rounded-2xl bg-white/10 text-white"><MonitorSmartphone className="size-6" aria-hidden /></span>
               <h3 className="mt-8 font-display text-2xl font-extrabold tracking-tight sm:text-3xl">Web Tasarım ve Dijital Çözümler</h3>
-              <p className="mt-4 max-w-lg leading-relaxed text-navy-200">Kurumsal web siteleri, özel web yazılımları, WordPress ve e-ticaret siteleri; yayından sonra hosting ve teknik destek. İşletmenize gereken dijital altyapıyı baştan sona kuruyoruz.</p>
+              <p className="mt-4 max-w-lg leading-relaxed text-navy-200">Kurumsal web siteleri, özel web yazılımları ve e-ticaret; sunucu altyapısı, kurumsal e-posta ve dijital reklam desteğiyle birlikte. İşletmenize gereken dijital altyapıyı baştan sona kuruyoruz.</p>
               <ul className="mt-7 flex flex-wrap gap-2">
-                {webServices.map((s) => <li key={s.title} className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-navy-100">{s.title}</li>)}
+                {webServiceChips.map((c) => <li key={c} className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-navy-100">{c}</li>)}
               </ul>
               <span className="mt-auto inline-flex items-center gap-2 pt-10 text-sm font-bold text-white">Hizmetleri inceleyin <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden /></span>
             </a>
@@ -167,7 +168,7 @@ export default async function HomePage() {
           <dl data-reveal="strip" className="mt-5 grid gap-px overflow-hidden rounded-2xl border border-navy-100 bg-navy-100 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { k: `${years}+ yıl`, v: `${site.foundedYear}'den beri dijital projeler` },
-              { k: "6 canlı site", v: "Villa kiralama sistemlerimiz yayında" },
+              { k: "Villa sektörü", v: "Sektöre özel kiralama ve rezervasyon çözümleri" },
               { k: "Kaş · Kalkan", v: "Yüz yüze görüşebileceğiniz yerel ekip" },
               { k: "Tek muhatap", v: "Tasarım, yazılım, hosting ve bakım" },
             ].map((s) => (
@@ -180,48 +181,44 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 4. Category A */}
+      {/* 4. Category A: services (8 cards) */}
       <section id="web-cozumler" className="scroll-mt-24 bg-surface py-20 sm:py-28">
-        <div className="container-page grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-          <div className="lg:sticky lg:top-28 lg:self-start">
-            <SectionHeading eyebrow="Web Tasarım ve Dijital Çözümler" title="İşletmeniz için doğru dijital çözüm" text="Kurumsal bir tanıtım sitesinden işinize özel bir yazılıma kadar; tasarım, geliştirme, yayın ve bakım aynı ekipte." />
-            <div data-reveal className="mt-8">
-              <Link href="/iletisim#teklif" className="motion-press group inline-flex h-12 items-center gap-2 rounded-xl bg-brand-600 px-6 text-sm font-bold text-white hover:bg-brand-700">
-                Ücretsiz teklif alın <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
-              </Link>
+        <div className="container-page">
+          <div className="grid items-end gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+            <SectionHeading eyebrow="Web Tasarım ve Dijital Çözümler" title="İşletmeniz için doğru dijital çözüm" />
+            <div data-reveal className="border-l-2 border-aqua-500 pl-5">
+              <p className="font-display text-lg font-bold leading-snug text-navy-900 sm:text-xl">{brandMessage.lead}</p>
+              <p className="mt-2 leading-relaxed text-navy-500">{brandMessage.text}</p>
             </div>
-            {webCase ? (
-              <Link data-reveal href={`/projeler/${webCase.slug}`} className="group mt-10 flex items-center gap-4 rounded-2xl border border-navy-100 bg-white p-4 transition-[border-color,box-shadow] duration-500 hover:border-navy-200 hover:shadow-lift">
-                {webCase.imagePath ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={`/media/${webCase.imagePath}`} alt="" loading="lazy" decoding="async" className="size-16 shrink-0 rounded-xl object-cover object-top" />
-                ) : null}
-                <span className="min-w-0">
-                  <span className="block text-xs font-bold uppercase tracking-[0.14em] text-brand-600">Örnek proje</span>
-                  <span className="mt-1 block truncate font-display text-base font-bold text-navy-900">{webCase.clientName ?? webCase.title}</span>
-                  <span className="block text-sm text-navy-500">{serviceTypes.label(webCase.category)}</span>
-                </span>
-                <ArrowUpRight className="ml-auto size-5 shrink-0 text-navy-400 transition-[translate,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-navy-900" aria-hidden />
-              </Link>
-            ) : null}
           </div>
-          <ol data-reveal-group className="divide-y divide-navy-100 border-y border-navy-100">
+          <ol data-reveal-group className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {webServices.map((s, i) => {
               const Icon = ICONS[s.icon]!;
+              const villa = "villa" in s;
               return (
-                <li key={s.title} className="group grid grid-cols-[auto_1fr] gap-x-5 py-7 sm:grid-cols-[3rem_auto_1fr] sm:items-start sm:gap-x-6">
-                  <span className="rv-num hidden pt-1 font-display text-sm font-extrabold text-navy-300 sm:block">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="rv-icon grid size-12 place-items-center rounded-xl border border-navy-100 bg-white text-navy-900 transition-[background-color,color,border-color] duration-500 group-hover:border-navy-900 group-hover:bg-navy-900 group-hover:text-white">
-                    <Icon className="size-5" aria-hidden />
-                  </span>
-                  <div>
-                    <h3 className="font-display text-lg font-bold text-navy-900 sm:text-xl">{s.title}</h3>
-                    <p className="mt-1.5 leading-relaxed text-navy-500">{s.text}</p>
+                <li key={s.title} className="group flex flex-col rounded-2xl border border-navy-100 bg-white p-6 transition-[border-color,box-shadow] duration-500 hover:border-navy-200 hover:shadow-lift">
+                  <div className="flex items-center justify-between">
+                    <span className={`rv-icon grid size-11 place-items-center rounded-xl ${villa ? "bg-aqua-50 text-aqua-700" : "bg-navy-50 text-navy-900"}`}>
+                      <Icon className="size-5" aria-hidden />
+                    </span>
+                    <span className="rv-num font-display text-sm font-extrabold text-navy-300">{String(i + 1).padStart(2, "0")}</span>
                   </div>
+                  <h3 className="mt-5 font-display text-base font-bold leading-snug text-navy-900">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-navy-500">{s.text}</p>
+                  {villa ? (
+                    <a href="#villa-yazilimi" className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-bold text-aqua-700 hover:text-aqua-600">
+                      Ayrıntılar <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                    </a>
+                  ) : null}
                 </li>
               );
             })}
           </ol>
+          <div data-reveal className="mt-10">
+            <Link href="/iletisim#teklif" className="motion-press group inline-flex h-12 items-center gap-2 rounded-xl bg-brand-600 px-6 text-sm font-bold text-white hover:bg-brand-700">
+              Ücretsiz teklif alın <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -231,7 +228,7 @@ export default async function HomePage() {
           <div className="grid items-end gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
             <SectionHeading light eyebrow="Villa Kiralama Yazılımları" title="Villa kiralama yazılımlarında uzmanız" />
             <p data-reveal className="text-base leading-relaxed text-navy-200 sm:text-lg">
-              Kalkan ve Kaş&apos;ta villa kiralamanın nasıl işlediğini yakından biliyoruz: kısa ve yoğun bir sezon, dünyanın dört bir yanından misafirler, aynı villanın hem kendi sitenizde hem platformlarda satılması. Geliştirdiğimiz sistemler bugün 6 villa kiralama sitesinde çalışıyor.
+              Kalkan ve Kaş&apos;ta villa kiralamanın nasıl işlediğini yakından biliyoruz: kısa ve yoğun bir sezon, dünyanın dört bir yanından misafirler, aynı villanın hem kendi sitenizde hem platformlarda satılması. Bu yüzden villa kiralama sektörüne özel dijital çözümler geliştiriyoruz.
             </p>
           </div>
 
@@ -352,8 +349,8 @@ export default async function HomePage() {
           </div>
           <div id="bolgeler" data-reveal className="scroll-mt-24 self-start rounded-3xl border border-navy-100 bg-surface p-7 sm:p-9">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-600">Hizmet bölgelerimiz</p>
-            <h2 className="mt-3 font-display text-2xl font-extrabold tracking-tight text-navy-900">Antalya ve Muğla&apos;da yanınızdayız</h2>
-            <p className="mt-3 text-sm leading-relaxed text-navy-500">Merkezimiz Kaş&apos;ta. Antalya ve Muğla&apos;nın tamamına, ayrıca Türkiye genelinde uzaktan hizmet veriyoruz.</p>
+            <h2 className="mt-3 font-display text-2xl font-extrabold tracking-tight text-navy-900">Antalya, Fethiye ve Muğla&apos;da yanınızdayız</h2>
+            <p className="mt-3 text-sm leading-relaxed text-navy-500">Merkezimiz Kaş&apos;ta. Antalya&apos;nın ve Fethiye başta olmak üzere Muğla&apos;nın tamamına, ayrıca Türkiye genelinde uzaktan hizmet veriyoruz.</p>
             {serviceRegions.map((r) => (
               <div key={r.name} className="mt-6">
                 <p className="flex items-center gap-2 font-display text-sm font-bold text-navy-900"><MapPin className="size-4 text-aqua-600" aria-hidden /> {r.name}</p>

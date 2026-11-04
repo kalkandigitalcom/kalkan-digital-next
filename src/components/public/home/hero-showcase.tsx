@@ -20,7 +20,7 @@ export function HeroShowcase({ front, back }: { front: ShowcaseShot | null; back
       // Hidden on small screens: the category doors follow right below the hero there.
       <div className="intro-visual relative hidden lg:block">
         <div className="par-slow grid gap-4">
-          <CategoryTile href="#web-cozumler" icon={<MonitorSmartphone className="size-5" aria-hidden />} title="Web Tasarım ve Dijital Çözümler" items={["Kurumsal web tasarım", "Özel web yazılım", "WordPress", "E-ticaret", "Hosting ve teknik destek"]} />
+          <CategoryTile href="#web-cozumler" icon={<MonitorSmartphone className="size-5" aria-hidden />} title="Web Tasarım ve Dijital Çözümler" items={["Kurumsal web tasarım", "Özel web yazılım", "E-ticaret", "Sunucu ve hosting", "Kurumsal e-posta", "Dijital reklam"]} />
           <CategoryTile href="#villa-yazilimi" accent icon={<Home className="size-5" aria-hidden />} title="Villa Kiralama Yazılımları" items={["Villa kiralama sitesi", "Rezervasyon sistemi", "Airbnb ve Booking çift yönlü eşitleme", "Çoklu dil ve para birimi"]} />
         </div>
       </div>
