@@ -37,8 +37,7 @@ import { site } from "@/lib/site";
 import { SplitWords, Word } from "@/components/public/split-words";
 import { HeroShowcase, type ShowcaseShot } from "@/components/public/home/hero-showcase";
 import { SyncDiagram } from "@/components/public/home/sync-diagram";
-import { PortfolioGrid } from "@/components/public/home/portfolio-grid";
-import { villaProjectNotes } from "@/lib/service-pages";
+import { PortfolioMarquee } from "@/components/public/home/portfolio-marquee";
 import { TrustCards } from "@/components/public/home/trust-cards";
 import { ExperienceBand } from "@/components/public/home/experience-band";
 import { yearOf, todayIso } from "@/lib/dates";
@@ -304,36 +303,36 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 6. References: editorial portfolio showcase */}
-      <section id="projeler" className="showcase-section scroll-mt-24 py-20 sm:py-28">
+      {/* 6. References: two endless logo rows */}
+      <section id="projeler" className="scroll-mt-24 overflow-hidden bg-surface py-20 sm:py-28">
         <div className="container-page">
-          <div className="grid items-end gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
+          <div className="grid items-end gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
             <div data-reveal="story">
               <p className="rv-eyebrow text-xs font-bold uppercase tracking-[0.18em] text-brand-600">Referanslar</p>
-              <h2 className="mt-4 font-display text-4xl font-extrabold leading-[1.02] tracking-tight text-navy-900 sm:text-6xl">
+              <h2 className="mt-4 font-display text-4xl font-extrabold leading-[1.04] tracking-tight text-navy-900 sm:text-5xl">
                 <SplitWords text="Kimlerle çalıştık?" />
-                {projects.length > 0 ? <sup className="ml-2 align-super font-display text-lg font-extrabold text-aqua-600 sm:text-2xl">({String(projects.length).padStart(2, "0")})</sup> : null}
               </h2>
             </div>
-            <div data-reveal className="lg:pb-2">
+            <div data-reveal className="lg:pb-1">
               <p className="text-base leading-relaxed text-navy-600 sm:text-lg">Farklı sektörlerdeki markalar için geliştirdiğimiz dijital projelerden seçkiler.</p>
               {projects.length > 0 ? (
-                <Link href="/projeler" className="group mt-4 inline-flex items-center gap-2 text-sm font-bold text-navy-900 hover:text-brand-600">Tüm projeler <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden /></Link>
+                <Link href="/projeler" className="group mt-3 inline-flex items-center gap-2 text-sm font-bold text-navy-900 hover:text-brand-600">Tüm projeler <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden /></Link>
               ) : null}
             </div>
           </div>
-          {projects.length > 0 ? (
-            <div data-reveal className="mt-12">
-              <PortfolioGrid items={projects.map((p) => ({ ...p, note: villaProjectNotes[p.slug] ?? p.summary }))} />
-            </div>
-          ) : (
+          {projects.length === 0 ? (
             <div data-reveal className="mt-12 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
               <p className="font-display text-lg font-bold text-navy-900">Proje vitrinimizi güncelliyoruz.</p>
               <p className="mx-auto mt-2 max-w-lg text-sm text-navy-500">Sektörünüze yakın örnek çalışmalarımızı görüşmemizde sizinle paylaşmaktan memnuniyet duyarız.</p>
               <Link href="/iletisim#teklif" className="mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-navy-900 px-5 text-sm font-bold text-white hover:bg-navy-800">Görüşme planlayalım <ArrowRight className="size-4" aria-hidden /></Link>
             </div>
-          )}
+          ) : null}
         </div>
+        {projects.length > 0 ? (
+          <div data-reveal className="mx-auto mt-12 max-w-[1920px] sm:mt-16">
+            <PortfolioMarquee projects={projects} />
+          </div>
+        ) : null}
       </section>
 
       {/* 7. Process */}

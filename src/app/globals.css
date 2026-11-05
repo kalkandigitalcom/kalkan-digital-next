@@ -302,9 +302,6 @@
   /* ---- Home: process connector draws in with the steps (desktop only) ---- */
   html[data-reveal-on] .process-line[data-revealed="anim"]::before { animation: k-line-draw 1.4s var(--ease-premium) 200ms backwards; }
 
-  /* ---- Home portfolio: cards rise in after a filter change ---- */
-  .portfolio-grid > li { --rise: 14px; animation: k-rise 0.6s var(--ease-premium) backwards; animation-delay: calc(var(--i, 0) * 45ms); }
-
   /* ---- Mobile menu ---- */
   #mobile-menu[data-state="open"] { animation: k-menu-open 0.45s var(--ease-premium) both; }
   #mobile-menu[data-state="open"] nav > * { --rise: 10px; animation: k-rise 0.6s var(--ease-premium) backwards; }
@@ -417,74 +414,88 @@
   .experience-glow { animation: k-experience-glow 14s ease-in-out infinite alternate; }
 }
 
-/* ---- Home portfolio showcase: editorial bento tiles ----
- * Tones: feature (navy), light (paper with fine grid), aqua (light turquoise), dark (navy).
- * Details are always visible; hover only adds lift and light, and only on devices that can hover. */
-.showcase-section {
-  background:
-    linear-gradient(rgb(11 31 58 / 0.045) 1px, transparent 1px) 0 0 / 100% 64px,
-    linear-gradient(90deg, rgb(11 31 58 / 0.045) 1px, transparent 1px) 0 0 / 64px 100%,
-    #f4f6f3;
+/* ---- Home portfolio: two endless logo rows moving in opposite directions ----
+ * Each track holds one segment twice and slides by exactly one segment (-50%), so the loop is
+ * seamless. Logos are unchanged files, only grayscale until hover/focus. No motion with reduced
+ * motion: the rows become plain horizontally scrollable lists without the duplicate copy. */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
 }
-.showcase-tile {
-  isolation: isolate;
-  transition: box-shadow 0.5s var(--ease-premium), translate 0.5s var(--ease-premium), background-color 0.5s var(--ease-premium);
+.marquee-track {
+  display: flex;
+  width: max-content;
 }
-.showcase-feature {
-  background: radial-gradient(120% 90% at 0% 100%, rgb(27 78 245 / 0.28), transparent 55%), var(--color-navy-900);
+.marquee-item {
+  flex: none;
+  padding-right: 1rem;
 }
-.showcase-light {
+.marquee-link {
+  display: grid;
+  place-items: center;
+  width: 10.5rem;
+  height: 5rem;
+  padding: 0 1.5rem;
+  border-radius: 1.25rem;
   background: #fff;
-  box-shadow: inset 0 0 0 1px rgb(11 31 58 / 0.08);
+  box-shadow: 0 1px 2px rgb(11 31 58 / 0.05), 0 14px 30px -24px rgb(11 31 58 / 0.4);
+  outline: none;
+  transition: box-shadow 0.5s var(--ease-premium), translate 0.5s var(--ease-premium);
 }
-.showcase-aqua {
-  background: linear-gradient(160deg, var(--color-aqua-50), var(--color-aqua-100));
-  box-shadow: inset 0 0 0 1px rgb(14 167 179 / 0.18);
+.marquee-link:focus-visible { box-shadow: 0 0 0 2px var(--color-brand-500); }
+.marquee-logo {
+  display: block;
+  max-width: 100%;
+  max-height: 3rem;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.6;
+  transition: filter 0.5s var(--ease-premium), opacity 0.5s var(--ease-premium);
 }
-.showcase-dark {
-  background: linear-gradient(160deg, var(--color-navy-800), var(--color-navy-950));
+.marquee-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-align: center;
+  color: var(--color-navy-900);
 }
-.showcase-plate {
-  box-shadow: 0 1px 2px rgb(11 31 58 / 0.06), 0 18px 34px -20px rgb(11 31 58 / 0.45);
-  transition: translate 0.6s var(--ease-premium), scale 0.6s var(--ease-premium), rotate 0.6s var(--ease-premium), box-shadow 0.6s var(--ease-premium);
+.marquee-link:hover .marquee-logo,
+.marquee-link:focus-visible .marquee-logo,
+.marquee-link:active .marquee-logo {
+  filter: grayscale(0%);
+  opacity: 1;
 }
-.showcase-arrow,
-.showcase-shot,
-.showcase-glow { transition: rotate 0.5s var(--ease-premium), scale 0.7s var(--ease-premium), opacity 0.5s var(--ease-premium), translate 0.7s var(--ease-premium); }
-.showcase-tab::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 -1px 0;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--color-navy-900), var(--color-aqua-500));
-  scale: 0 1;
-  transform-origin: left;
-  transition: scale 0.45s var(--ease-premium);
+@media (min-width: 40rem) {
+  .marquee-item { padding-right: 1.25rem; }
+  .marquee-link { width: 12.5rem; height: 6rem; padding: 0 2rem; }
+  .marquee-logo { max-height: 3.5rem; }
 }
-.showcase-tab[data-on]::after { scale: 1 1; }
 @media (hover: hover) {
-  .showcase-tile:hover {
-    translate: 0 -4px;
-    box-shadow: 0 28px 50px -28px rgb(11 31 58 / 0.55), 0 14px 30px -22px rgb(34 195 206 / 0.4);
+  .marquee-link:hover {
+    translate: 0 -3px;
+    box-shadow: 0 1px 2px rgb(11 31 58 / 0.05), 0 22px 40px -24px rgb(11 31 58 / 0.45), 0 10px 26px -20px rgb(34 195 206 / 0.45);
   }
-  .showcase-tile:hover .showcase-plate {
-    translate: 0 -6px;
-    scale: 1.04;
-    rotate: -1.5deg;
-    box-shadow: 0 1px 2px rgb(11 31 58 / 0.06), 0 30px 46px -24px rgb(11 31 58 / 0.55);
-  }
-  .showcase-tile:hover .showcase-arrow { rotate: 45deg; }
-  .showcase-tile:hover .showcase-shot { scale: 1.04; }
-  .showcase-tile:hover .showcase-glow { translate: -2rem 2rem; opacity: 0.8; }
-  .showcase-light:hover { background: linear-gradient(160deg, #fff, var(--color-brand-50)); }
-  .showcase-note {
-    opacity: 0;
-    translate: 0 6px;
-    transition: opacity 0.4s var(--ease-premium), translate 0.4s var(--ease-premium);
-  }
-  .showcase-tile:hover .showcase-note,
-  .showcase-tile:focus-visible .showcase-note { opacity: 1; translate: 0 0; }
+}
+@keyframes k-marquee-left {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes k-marquee-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .marquee-track { animation: k-marquee-left var(--marquee-duration, 40s) linear infinite; will-change: transform; }
+  .marquee[data-direction="right"] .marquee-track { animation-name: k-marquee-right; }
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track { animation-play-state: paused; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee { overflow-x: auto; }
+  .marquee-clone { display: none; }
 }
 
 /* ---- Home trust cards: soft light background, light ring and lift on hover ----
