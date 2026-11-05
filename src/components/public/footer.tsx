@@ -25,6 +25,9 @@ export function SiteFooter({ contact }: { contact: PublicContact }) {
             <li><Link className="hover:text-white" href="/hizmetler/wordpress">WordPress</Link></li>
             <li><Link className="hover:text-white" href="/hizmetler/e-ticaret">E-ticaret</Link></li>
             <li><Link className="hover:text-white" href="/hizmetler/hosting-teknik-destek">Hosting ve teknik destek</Link></li>
+            <li><Link className="hover:text-white" href="/hizmetler/kurumsal-e-posta">Kurumsal e-posta</Link></li>
+            <li><Link className="hover:text-white" href="/hizmetler/google-ads">Google Ads ve dijital reklam</Link></li>
+            <li><Link className="hover:text-white" href="/hizmetler/sosyal-medya-yonetimi">Sosyal medya yönetimi</Link></li>
             <li><Link className="hover:text-white" href="/hizmetler">Tüm hizmetler</Link></li>
           </ul>
         </nav>

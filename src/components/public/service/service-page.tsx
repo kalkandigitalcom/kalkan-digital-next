@@ -113,7 +113,7 @@ export async function ServicePageView({ page }: { page: ServicePage }) {
         <section className="scroll-mt-24 border-t border-navy-100 py-16 sm:py-20">
           <div className="container-page">
             <p data-reveal className="text-xs font-bold uppercase tracking-[0.18em] text-brand-600">İlgili sayfalar</p>
-            <ul data-reveal-group className="mt-6 grid gap-4 md:grid-cols-3">
+            <ul data-reveal-group className={`mt-6 grid gap-4 md:grid-cols-2 ${page.related.length > 3 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
               {page.related.map((r) => (
                 <li key={r.href}>
                   <Link href={r.href} className="group flex h-full flex-col rounded-2xl border border-navy-100 bg-white p-6 transition-[border-color,box-shadow] duration-500 hover:border-navy-200 hover:shadow-lift">

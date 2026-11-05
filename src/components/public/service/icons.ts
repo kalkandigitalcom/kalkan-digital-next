@@ -58,6 +58,13 @@ import {
   Truck,
   UserCog,
   Users,
+  AtSign,
+  Settings2,
+  Target,
+  LineChart,
+  Wallet,
+  MessagesSquare,
+  CheckCircle2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -120,6 +127,13 @@ export const SERVICE_ICONS: Record<string, LucideIcon> = {
   Truck,
   UserCog,
   Users,
+  AtSign,
+  Settings2,
+  Target,
+  LineChart,
+  Wallet,
+  MessagesSquare,
+  CheckCircle2,
 };
 
 /** Renders a content icon by name (falls back to a neutral icon). Decorative: hidden from assistive tech. */

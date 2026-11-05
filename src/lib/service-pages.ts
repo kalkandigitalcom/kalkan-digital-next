@@ -10,7 +10,7 @@
  *   integration, never as a ready feature.
  */
 
-export type ServiceKey = "web_design" | "software" | "villa_rental_software" | "hosting_support";
+export type ServiceKey = "web_design" | "software" | "villa_rental_software" | "hosting_support" | "digital_ads" | "social_media";
 
 export interface LinkCard {
   href: string;
@@ -19,7 +19,7 @@ export interface LinkCard {
 }
 
 export type Block =
-  | { type: "features"; id: string; eyebrow: string; title: string; text?: string; items: { icon: string; title: string; text: string }[]; columns?: 2 | 3 | 4; tone?: "light" | "surface" | "dark" }
+  | { type: "features"; id: string; eyebrow: string; title: string; text?: string; items: { icon: string; title: string; text: string; href?: string }[]; columns?: 2 | 3 | 4; tone?: "light" | "surface" | "dark" }
   | { type: "split"; id: string; eyebrow: string; title: string; paragraphs: string[]; bullets?: string[]; tone?: "light" | "surface" | "dark"; link?: { href: string; label: string } }
   | { type: "steps"; id: string; eyebrow: string; title: string; text?: string; items: { title: string; text: string }[]; tone?: "light" | "surface" }
   | { type: "flow"; id: string; eyebrow: string; title: string; text?: string; items: { icon: string; title: string; text: string }[]; tone?: "light" | "surface" | "dark" }
@@ -118,9 +118,9 @@ export const hubPage: ServicePage = {
       text: "Sitenizi kurduktan sonra görünürlüğünüzü ve iletişiminizi destekleyen hizmetler. Kapsamı ihtiyacınıza göre birlikte belirliyoruz.",
       columns: 3,
       items: [
-        { icon: "Megaphone", title: "Google Ads ve dijital reklam", text: "Google Ads kampanyalarının kurulumu, optimizasyonu ve performans takibi." },
-        { icon: "Share2", title: "Sosyal medya yönetimi", text: "Hesap yönetimi, içerik planlama ve dijital reklam çalışmaları." },
-        { icon: "Mail", title: "Kurumsal e-posta", text: "Alan adınıza özel e-posta adreslerinin kurulumu, yapılandırması ve teknik yönetimi." },
+        { icon: "Megaphone", title: "Google Ads ve dijital reklam", text: "Google Ads kampanyalarının kurulumu, optimizasyonu ve performans takibi.", href: "/hizmetler/google-ads" },
+        { icon: "Share2", title: "Sosyal medya yönetimi", text: "Hesap yönetimi, içerik planlama ve dijital reklam çalışmaları.", href: "/hizmetler/sosyal-medya-yonetimi" },
+        { icon: "Mail", title: "Kurumsal e-posta", text: "Alan adınıza özel e-posta adreslerinin kurulumu, yapılandırması ve teknik yönetimi.", href: "/hizmetler/kurumsal-e-posta" },
       ],
     },
     { type: "projects", id: "projeler", eyebrow: "Referanslar", title: "Web ve yazılım projelerimizden", categories: ["web_design", "software", "hotel_tourism_web", "hosting_support"] },
@@ -623,6 +623,280 @@ export const webServicePages: ServicePage[] = [
       { href: "/hizmetler/wordpress", title: "WordPress", text: "WordPress sitelerinin kurulumu, bakımı ve taşınması." },
       { href: "/hizmetler/e-ticaret", title: "E-ticaret", text: "Mağaza altyapısı ve sipariş yönetimi." },
       { href: "/hizmetler/ozel-yazilim", title: "Özel web yazılım", text: "İşinize özel yazılımların geliştirilmesi." },
+      { href: "/hizmetler/kurumsal-e-posta", title: "Kurumsal e-posta", text: "Alan adınıza özel e-posta kurulumu ve yönetimi." },
+    ],
+  },
+
+  {
+    path: "/hizmetler/kurumsal-e-posta",
+    kind: "web",
+    label: "Kurumsal e-posta",
+    parent: SERVICES_HUB,
+    seo: {
+      title: "Kurumsal E-Posta Kurulum ve Yönetimi",
+      description: "Alan adınıza özel kurumsal e-posta adresleri: kurulum, DNS yapılandırması, cihaz kurulumu, kullanıcı yönetimi ve teknik destek. Teklif alın.",
+      keywords: ["kurumsal e-posta", "kurumsal mail kurulumu", "alan adına özel e-posta"],
+    },
+    schema: { serviceType: "Kurumsal e-posta kurulumu ve yönetimi", name: "Kurumsal E-Posta Kurulum ve Yönetimi" },
+    hero: {
+      eyebrow: "Web Tasarım ve Dijital Çözümler",
+      h1: "Kurumsal e-posta kurulum ve yönetimi",
+      lead: "Müşterilerinize ad@isletmeniz.com gibi alan adınıza özel adreslerden yazın. Kurumsal e-posta hesaplarınızın kurulumunu, yapılandırmasını ve teknik yönetimini üstleniyoruz; ekibiniz yalnızca e-postalarına odaklanıyor.",
+      highlights: [
+        { icon: "AtSign", label: "Alan adınıza özel adresler" },
+        { icon: "Settings2", label: "DNS ve teslim ayarları" },
+        { icon: "Smartphone", label: "Telefon ve bilgisayar kurulumu" },
+        { icon: "UserCog", label: "Kullanıcı yönetimi" },
+      ],
+    },
+    cta: { primary: "Kurumsal e-posta için teklif alın", hizmet: "hosting_support", whatsapp: "Merhaba, kurumsal e-posta kurulumu için bilgi almak istiyorum.", bandTitle: "Ekibiniz için kurumsal e-postaya geçelim.", bandText: "Kaç kullanıcınız olduğunu ve şu an hangi adresleri kullandığınızı paylaşın; size uygun kurulum planını çıkaralım." },
+    blocks: [
+      {
+        type: "split",
+        id: "neden-kurumsal-e-posta",
+        eyebrow: "Neden kurumsal e-posta?",
+        title: "Her e-postanız markanızı temsil eder",
+        paragraphs: [
+          "Teklif, fatura ya da rezervasyon onayı; müşterilerinize gönderdiğiniz her e-posta işletmenizin kartvizitidir. Genel bir e-posta servisinden gelen adresler, ne kadar iyi çalışırsanız çalışın daha az güven verir.",
+          "Alan adınıza özel adresler hem kurumsal bir görünüm sağlar hem de ekibinizden biri ayrıldığında yazışmaların ve hesabın işletmenizde kalmasına yardımcı olur.",
+        ],
+        bullets: ["Alan adınızla güven veren adresler", "Kişi ve departman adresleri (bilgi@, muhasebe@)", "Ayrılan çalışanın hesabının yönetimi", "Tutarlı imza ve görünüm"],
+      },
+      {
+        type: "features",
+        id: "neler-dahil",
+        eyebrow: "Sunulan çözümler",
+        title: "Kurulumdan günlük yönetime kadar",
+        tone: "surface",
+        columns: 3,
+        items: [
+          { icon: "Server", title: "Altyapı seçimi", text: "Kullanıcı sayınıza ve ihtiyacınıza uygun e-posta altyapısını birlikte belirliyoruz." },
+          { icon: "Settings2", title: "Alan adı ve DNS ayarları", text: "E-postaların doğru teslim edilmesi için gereken alan adı ve doğrulama kayıtlarının yapılandırılması." },
+          { icon: "AtSign", title: "Hesap ve adres kurulumu", text: "Kişi, departman ve yönlendirme adreslerinin oluşturulması." },
+          { icon: "Smartphone", title: "Cihaz kurulumu", text: "Hesapların telefon, tablet ve bilgisayarlardaki e-posta uygulamalarına kurulması." },
+          { icon: "UserCog", title: "Kullanıcı yönetimi", text: "Yeni kullanıcı ekleme, ayrılan kullanıcıların hesaplarının yönetimi ve parola işlemleri." },
+          { icon: "LifeBuoy", title: "Teknik destek", text: "E-posta gönderme, alma veya cihaz kurulumunda yaşanan sorunlarda destek." },
+        ],
+      },
+      {
+        type: "checklist",
+        id: "guvenlik-ve-teslim",
+        eyebrow: "Güvenlik ve teslim",
+        title: "E-postalarınız spam klasörüne düşmesin",
+        text: "Kurumsal e-postada en sık yaşanan sorun, gönderilen e-postaların karşı tarafta spam klasörüne düşmesidir. Kurulumda bunun için şunlara dikkat ediyoruz:",
+        items: ["Gönderen doğrulama kayıtlarının (SPF, DKIM, DMARC) yapılandırılması", "Güçlü parola politikası", "Mümkün olan hesaplarda iki adımlı doğrulama önerisi", "Yönlendirme ve takma adların doğru kurulumu", "Web sitenizin formlarından gelen e-postaların düzenlenmesi"],
+      },
+      {
+        type: "steps",
+        id: "surec",
+        eyebrow: "Çalışma süreci",
+        title: "Kurumsal e-postaya geçiş",
+        items: [
+          { title: "İhtiyaç belirleme", text: "Kullanıcı sayısı, adresler ve mevcut e-posta durumunuz." },
+          { title: "Altyapı ve plan", text: "Altyapıyı seçiyor, geçiş planını yazılı paylaşıyoruz." },
+          { title: "Yapılandırma", text: "Alan adı ve DNS kayıtları ile hesapları kuruyoruz." },
+          { title: "Cihaz kurulumu", text: "Ekibinizin cihazlarına hesapları kuruyor, testleri yapıyoruz." },
+          { title: "Yönetim ve destek", text: "Kullanıcı değişikliklerini ve teknik sorunları birlikte yönetiyoruz." },
+        ],
+      },
+    ],
+    faq: [
+      { q: "Mevcut e-postalarımı yeni hesaba taşıyabilir miyiz?", a: "Eski hesaplarınızdaki e-postaların taşınmasını, mevcut altyapınıza göre kapsamda birlikte değerlendiriyoruz." },
+      { q: "Alan adım yoksa ne yapmalıyım?", a: "Önce işletmenize uygun bir alan adı belirleyip kaydını yapıyoruz; e-posta adresleriniz bu alan adı üzerinden kurulur." },
+      { q: "E-postalarımı telefondan kullanabilir miyim?", a: "Evet. Hesaplarınızı telefon, tablet ve bilgisayarlarınızdaki e-posta uygulamalarına kuruyoruz." },
+      { q: "Gönderdiğim e-postalar neden spam klasörüne düşüyor?", a: "Çoğu zaman alan adının gönderen doğrulama kayıtları eksik veya hatalıdır. Kurulumda bu kayıtları yapılandırıyor, mevcut kurulumunuzda sorun varsa inceliyoruz." },
+    ],
+    related: [
+      { href: "/hizmetler/hosting-teknik-destek", title: "Hosting ve teknik destek", text: "Web siteniz ve alan adınız için sunucu, yedekleme ve destek." },
+      { href: "/hizmetler/kurumsal-web-tasarim", title: "Kurumsal web tasarım", text: "Alan adınızla uyumlu, kurumsal bir web sitesi." },
+      { href: "/hizmetler/google-ads", title: "Google Ads ve dijital reklam", text: "Gelen talepleri artırmak için reklam yönetimi." },
+    ],
+  },
+  {
+    path: "/hizmetler/google-ads",
+    kind: "web",
+    label: "Google Ads ve dijital reklam",
+    parent: SERVICES_HUB,
+    seo: {
+      title: "Google Ads ve Dijital Reklam Yönetimi",
+      description: "Google Ads kampanya kurulumu, anahtar kelime ve reklam metinleri, dönüşüm takibi, bütçe optimizasyonu ve düzenli raporlama. Teklif alın.",
+      keywords: ["google ads yönetimi", "google reklam ajansı", "dijital reklam yönetimi"],
+    },
+    schema: { serviceType: "Google Ads ve dijital reklam yönetimi", name: "Google Ads ve Dijital Reklam Yönetimi" },
+    hero: {
+      eyebrow: "Web Tasarım ve Dijital Çözümler",
+      h1: "Google Ads ve dijital reklam yönetimi",
+      lead: "Sizi arayan müşteriye doğru anda görünün. Google Ads kampanyalarınızı hedefinize göre kuruyor, bütçenizi takip ediyor ve sonuçları ölçülebilir hale getiriyoruz.",
+      highlights: [
+        { icon: "Search", label: "Arama ağı kampanyaları" },
+        { icon: "Target", label: "Hedefleme ve anahtar kelimeler" },
+        { icon: "LineChart", label: "Dönüşüm takibi" },
+        { icon: "BarChart3", label: "Düzenli raporlama" },
+      ],
+    },
+    cta: { primary: "Reklam yönetimi için teklif alın", hizmet: "digital_ads", whatsapp: "Merhaba, Google Ads reklam yönetimi için bilgi almak istiyorum.", bandTitle: "Reklam bütçenizi ölçülebilir hale getirelim.", bandText: "Hangi hizmetlerinizi, hangi bölgede ve hangi bütçeyle tanıtmak istediğinizi paylaşın; kampanya önerimizi yazılı olarak sunalım." },
+    blocks: [
+      {
+        type: "split",
+        id: "kimler-icin",
+        eyebrow: "Kimler için?",
+        title: "Aranan bir hizmetiniz varsa reklam doğru kanaldır",
+        paragraphs: [
+          "Google'da \"Kaş'ta villa kiralama\" ya da \"Fethiye'de web tasarım\" gibi arama yapan kişi, o an bir çözüm arıyordur. Arama reklamları, bu kişilere tam ihtiyaç anında görünmenizi sağlar.",
+          "Reklam tek başına satış getirmez; reklamın yönlendirdiği sayfanın da ikna edici ve hızlı olması gerekir. Bu yüzden kampanyayı web sitenizle birlikte değerlendiriyoruz.",
+        ],
+        bullets: ["Yeni açılan veya yeni müşteri arayan işletmeler", "Sezonluk talebi olan turizm işletmeleri", "Belirli bölgeye hizmet veren firmalar", "Organik görünürlüğü henüz oluşmamış siteler"],
+      },
+      {
+        type: "features",
+        id: "sunulan-cozumler",
+        eyebrow: "Sunulan çözümler",
+        title: "Kampanyanızın her aşaması",
+        tone: "surface",
+        columns: 3,
+        items: [
+          { icon: "Settings2", title: "Hesap ve kampanya kurulumu", text: "Google Ads hesabınızın ve kampanya yapısının hedeflerinize göre kurulması." },
+          { icon: "Search", title: "Anahtar kelime araştırması", text: "Müşterilerinizin kullandığı aramaların ve gereksiz tıklama getiren kelimelerin belirlenmesi." },
+          { icon: "PenLine", title: "Reklam metinleri", text: "Hizmetinizi net anlatan, aramayla uyumlu reklam metinleri." },
+          { icon: "LineChart", title: "Dönüşüm takibi", text: "Form, arama ve WhatsApp gibi müşteri temaslarının ölçülebilir hale getirilmesi." },
+          { icon: "Wallet", title: "Bütçe yönetimi", text: "Bütçenin performansa göre kampanyalar arasında dağıtılması ve takibi." },
+          { icon: "BarChart3", title: "Raporlama", text: "Harcama, tıklama ve dönüşümlerin anlaşılır raporlarla paylaşılması." },
+        ],
+      },
+      {
+        type: "flow",
+        id: "nasil-calisir",
+        eyebrow: "Nasıl çalışır?",
+        title: "Aramadan müşteri talebine",
+        items: [
+          { icon: "Search", title: "Arama", text: "Müşteri hizmetinizi arar" },
+          { icon: "Megaphone", title: "Reklam", text: "Doğru mesajla görünürsünüz" },
+          { icon: "MonitorSmartphone", title: "Açılış sayfası", text: "Hızlı ve ikna edici sayfa" },
+          { icon: "MessageCircle", title: "Talep", text: "Form, arama veya WhatsApp" },
+          { icon: "LineChart", title: "Ölçüm", text: "Sonuçlara göre iyileştirme" },
+        ],
+      },
+      {
+        type: "steps",
+        id: "surec",
+        eyebrow: "Çalışma süreci",
+        title: "Reklam yönetimi nasıl ilerliyor?",
+        items: [
+          { title: "Hedef ve bütçe", text: "Neyi, nerede ve hangi bütçeyle tanıtacağınızı netleştiriyoruz." },
+          { title: "Araştırma", text: "Anahtar kelimeleri ve rakip reklamlarını inceliyoruz." },
+          { title: "Kurulum", text: "Kampanyaları, reklamları ve dönüşüm takibini kuruyoruz." },
+          { title: "Optimizasyon", text: "Arama terimlerini, teklifleri ve bütçeyi düzenli takip ediyoruz." },
+          { title: "Raporlama", text: "Sonuçları anlaşılır raporlarla paylaşıp birlikte değerlendiriyoruz." },
+        ],
+      },
+      {
+        type: "checklist",
+        id: "seffaflik",
+        eyebrow: "Şeffaflık",
+        title: "Baştan net olan konular",
+        text: "Reklam yönetiminde güven, ne yapıldığının açıkça görülmesiyle oluşur. Bu yüzden:",
+        items: ["Reklam bütçesi ile yönetim ücreti ayrı belirtilir", "Kampanya verileri sizinle paylaşılır", "Raporlar anlaşılır dille hazırlanır", "Sonuç garantisi verilmez; hedefler gerçekçi belirlenir"],
+      },
+    ],
+    faq: [
+      { q: "Ne kadar reklam bütçesi ayırmalıyım?", a: "Sektörünüze, hedef bölgenize ve rekabete göre değişir. Ön görüşmede hedeflerinizi dinleyip başlangıç için gerçekçi bir bütçe önerisi sunuyoruz." },
+      { q: "Reklam bütçesi ile yönetim ücreti aynı şey mi?", a: "Hayır. Reklam bütçesi doğrudan reklam platformuna harcanır; yönetim ücreti kampanyalarınızın kurulumu ve takibi içindir. İkisini teklifte ayrı ayrı belirtiyoruz." },
+      { q: "Ne zaman sonuç alırım?", a: "Kampanyalar yayına girdiği andan itibaren görünmeye başlar; ancak verimli bir yapıya ulaşmak için ilk haftalarda veri toplayıp düzenli iyileştirme yapılır. Belirli bir sonuç garantisi vermiyoruz." },
+      { q: "Web sitem yoksa reklam verebilir miyim?", a: "Reklamın yönlendirdiği sayfa, sonucun en önemli parçasıdır. Siteniz yoksa ya da yetersizse önce uygun bir açılış sayfası öneriyoruz." },
+    ],
+    related: [
+      { href: "/hizmetler/sosyal-medya-yonetimi", title: "Sosyal medya yönetimi", text: "Markanızın sosyal medyadaki düzenli varlığı." },
+      { href: "/hizmetler/kurumsal-web-tasarim", title: "Kurumsal web tasarım", text: "Reklamın yönlendireceği hızlı ve ikna edici bir site." },
+      { href: "/hizmetler/e-ticaret", title: "E-ticaret", text: "Ürün satışı için reklamla desteklenebilen mağaza." },
+    ],
+  },
+  {
+    path: "/hizmetler/sosyal-medya-yonetimi",
+    kind: "web",
+    label: "Sosyal medya yönetimi",
+    parent: SERVICES_HUB,
+    seo: {
+      title: "Sosyal Medya Yönetimi",
+      description: "Sosyal medya hesap yönetimi, içerik planlama, düzenli paylaşım ve dijital reklam çalışmaları. Markanızın sosyal medyadaki sesini birlikte oluşturalım.",
+      keywords: ["sosyal medya yönetimi", "sosyal medya ajansı", "instagram hesap yönetimi"],
+    },
+    schema: { serviceType: "Sosyal medya yönetimi", name: "Sosyal Medya Yönetimi" },
+    hero: {
+      eyebrow: "Web Tasarım ve Dijital Çözümler",
+      h1: "Sosyal medya yönetimi",
+      lead: "Sosyal medya hesaplarınızı düzenli, tutarlı ve markanıza uygun şekilde yönetiyoruz: içerik planı, paylaşımlar, takipçi iletişimi ve ihtiyaç halinde sosyal medya reklamları.",
+      highlights: [
+        { icon: "CalendarDays", label: "İçerik planı" },
+        { icon: "Share2", label: "Düzenli paylaşım" },
+        { icon: "MessagesSquare", label: "Takipçi iletişimi" },
+        { icon: "Megaphone", label: "Sosyal medya reklamları" },
+      ],
+    },
+    cta: { primary: "Sosyal medya için teklif alın", hizmet: "social_media", whatsapp: "Merhaba, sosyal medya yönetimi için bilgi almak istiyorum.", bandTitle: "Sosyal medyanızı düzenli ve tutarlı hale getirelim.", bandText: "Hangi hesapları kullandığınızı ve hedeflerinizi paylaşın; içerik ve paylaşım planı önerimizi sunalım." },
+    blocks: [
+      {
+        type: "split",
+        id: "neden",
+        eyebrow: "Neden önemli?",
+        title: "Müşteriniz sizi önce sosyal medyada inceler",
+        paragraphs: [
+          "Özellikle turizm, yeme-içme ve hizmet sektöründe müşteriler karar vermeden önce işletmenin sosyal medya hesaplarına bakar. Aylardır paylaşım yapılmamış bir hesap, işletme açık olsa bile kapalı izlenimi verebilir.",
+          "Sosyal medya yönetimi; düzenli paylaşım, tutarlı bir görsel dil ve takipçilere zamanında yanıt vermekle güven oluşturur.",
+        ],
+      },
+      {
+        type: "features",
+        id: "sunulan-cozumler",
+        eyebrow: "Sunulan çözümler",
+        title: "Hesabınızın düzenli ve canlı kalması için",
+        tone: "surface",
+        columns: 3,
+        items: [
+          { icon: "UserCog", title: "Hesap yönetimi", text: "Profil bilgileri, biyografi ve öne çıkanların düzenlenmesi ve güncel tutulması." },
+          { icon: "CalendarDays", title: "İçerik planlama", text: "Markanıza ve sezonunuza uygun aylık içerik planı." },
+          { icon: "Share2", title: "Düzenli paylaşım", text: "Planlanan içeriklerin onayınızla düzenli olarak yayınlanması." },
+          { icon: "MessagesSquare", title: "Takipçi iletişimi", text: "Yorum ve mesajların takibi, gerekli yönlendirmelerin yapılması." },
+          { icon: "Megaphone", title: "Sosyal medya reklamları", text: "İhtiyaç halinde hedef kitlenize yönelik reklam çalışmaları." },
+          { icon: "BarChart3", title: "Raporlama", text: "Paylaşım ve etkileşim sonuçlarının dönemsel olarak paylaşılması." },
+        ],
+      },
+      {
+        type: "flow",
+        id: "aylik-dongu",
+        eyebrow: "Aylık döngü",
+        title: "Her ay aynı düzenle",
+        items: [
+          { icon: "ClipboardList", title: "Planlama", text: "Aylık içerik takvimi" },
+          { icon: "CheckCircle2", title: "Onay", text: "İçerikler onayınıza sunulur" },
+          { icon: "Share2", title: "Yayın", text: "Düzenli paylaşım" },
+          { icon: "MessagesSquare", title: "Etkileşim", text: "Yorum ve mesaj takibi" },
+          { icon: "BarChart3", title: "Değerlendirme", text: "Sonuçlara göre yeni plan" },
+        ],
+      },
+      {
+        type: "steps",
+        id: "surec",
+        eyebrow: "Çalışma süreci",
+        title: "Nasıl başlıyoruz?",
+        items: [
+          { title: "Tanışma", text: "Markanızı, hedef kitlenizi ve mevcut hesaplarınızı inceliyoruz." },
+          { title: "Hesap düzenleme", text: "Profil bilgilerini ve görünümü düzenliyoruz." },
+          { title: "İçerik planı", text: "İlk ayın içerik takvimini hazırlayıp onayınıza sunuyoruz." },
+          { title: "Yayın ve takip", text: "Paylaşımları yayınlıyor, etkileşimleri takip ediyoruz." },
+          { title: "Değerlendirme", text: "Sonuçları birlikte değerlendirip planı güncelliyoruz." },
+        ],
+      },
+    ],
+    faq: [
+      { q: "Hangi sosyal medya hesaplarını yönetiyorsunuz?", a: "İşletmenizin kullandığı ve hedef kitlenizin bulunduğu hesapları görüşmede birlikte belirliyoruz; kapsam teklifte yazılı olarak yer alır." },
+      { q: "Paylaşımlar yayınlanmadan önce onayıma sunulur mu?", a: "Evet. İçerik planı ve paylaşımlar yayınlanmadan önce onayınıza sunulur." },
+      { q: "Takipçi sayısı artışı garanti ediyor musunuz?", a: "Hayır. Takipçi veya etkileşim garantisi vermiyoruz; düzenli ve kaliteli içerikle hesabınızın sağlıklı büyümesine odaklanıyoruz." },
+      { q: "Sosyal medya reklamları ücrete dahil mi?", a: "Reklam bütçesi doğrudan platforma harcanır ve yönetim ücretinden ayrıdır; reklam çalışması isterseniz bunu teklifte ayrıca belirtiyoruz." },
+    ],
+    related: [
+      { href: "/hizmetler/google-ads", title: "Google Ads ve dijital reklam", text: "Arama yapan müşterilere reklamla ulaşın." },
+      { href: "/hizmetler/kurumsal-web-tasarim", title: "Kurumsal web tasarım", text: "Sosyal medyadan gelen ziyaretçiler için güçlü bir site." },
+      { href: "/hizmetler/kurumsal-e-posta", title: "Kurumsal e-posta", text: "Alan adınıza özel e-posta adresleri." },
     ],
   },
 ];

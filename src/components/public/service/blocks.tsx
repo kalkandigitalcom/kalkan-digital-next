@@ -68,6 +68,11 @@ export function ServiceBlock({ block, villa, projects }: { block: Block; villa: 
                 <IconBadge name={it.icon} dark={dark} accent={villa} />
                 <h3 className={`mt-5 font-display text-base font-bold leading-snug ${dark ? "text-white" : "text-navy-900"}`}>{it.title}</h3>
                 <p className={`mt-2 text-sm leading-relaxed ${dark ? "text-navy-300" : "text-navy-500"}`}>{it.text}</p>
+                {it.href ? (
+                  <Link href={it.href} className={`mt-4 inline-flex items-center gap-1.5 text-sm font-bold ${dark ? "text-aqua-300 hover:text-aqua-200" : "text-brand-600 hover:text-brand-700"}`}>
+                    İnceleyin<span className="sr-only">: {it.title}</span> <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+                  </Link>
+                ) : null}
               </li>
             ))}
           </ul>
