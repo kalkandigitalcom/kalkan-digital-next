@@ -417,6 +417,76 @@
   .experience-glow { animation: k-experience-glow 14s ease-in-out infinite alternate; }
 }
 
+/* ---- Home portfolio showcase: editorial bento tiles ----
+ * Tones: feature (navy), light (paper with fine grid), aqua (light turquoise), dark (navy).
+ * Details are always visible; hover only adds lift and light, and only on devices that can hover. */
+.showcase-section {
+  background:
+    linear-gradient(rgb(11 31 58 / 0.045) 1px, transparent 1px) 0 0 / 100% 64px,
+    linear-gradient(90deg, rgb(11 31 58 / 0.045) 1px, transparent 1px) 0 0 / 64px 100%,
+    #f4f6f3;
+}
+.showcase-tile {
+  isolation: isolate;
+  transition: box-shadow 0.5s var(--ease-premium), translate 0.5s var(--ease-premium), background-color 0.5s var(--ease-premium);
+}
+.showcase-feature {
+  background: radial-gradient(120% 90% at 0% 100%, rgb(27 78 245 / 0.28), transparent 55%), var(--color-navy-900);
+}
+.showcase-light {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgb(11 31 58 / 0.08);
+}
+.showcase-aqua {
+  background: linear-gradient(160deg, var(--color-aqua-50), var(--color-aqua-100));
+  box-shadow: inset 0 0 0 1px rgb(14 167 179 / 0.18);
+}
+.showcase-dark {
+  background: linear-gradient(160deg, var(--color-navy-800), var(--color-navy-950));
+}
+.showcase-plate {
+  box-shadow: 0 1px 2px rgb(11 31 58 / 0.06), 0 18px 34px -20px rgb(11 31 58 / 0.45);
+  transition: translate 0.6s var(--ease-premium), scale 0.6s var(--ease-premium), rotate 0.6s var(--ease-premium), box-shadow 0.6s var(--ease-premium);
+}
+.showcase-arrow,
+.showcase-shot,
+.showcase-glow { transition: rotate 0.5s var(--ease-premium), scale 0.7s var(--ease-premium), opacity 0.5s var(--ease-premium), translate 0.7s var(--ease-premium); }
+.showcase-tab::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--color-navy-900), var(--color-aqua-500));
+  scale: 0 1;
+  transform-origin: left;
+  transition: scale 0.45s var(--ease-premium);
+}
+.showcase-tab[data-on]::after { scale: 1 1; }
+@media (hover: hover) {
+  .showcase-tile:hover {
+    translate: 0 -4px;
+    box-shadow: 0 28px 50px -28px rgb(11 31 58 / 0.55), 0 14px 30px -22px rgb(34 195 206 / 0.4);
+  }
+  .showcase-tile:hover .showcase-plate {
+    translate: 0 -6px;
+    scale: 1.04;
+    rotate: -1.5deg;
+    box-shadow: 0 1px 2px rgb(11 31 58 / 0.06), 0 30px 46px -24px rgb(11 31 58 / 0.55);
+  }
+  .showcase-tile:hover .showcase-arrow { rotate: 45deg; }
+  .showcase-tile:hover .showcase-shot { scale: 1.04; }
+  .showcase-tile:hover .showcase-glow { translate: -2rem 2rem; opacity: 0.8; }
+  .showcase-light:hover { background: linear-gradient(160deg, #fff, var(--color-brand-50)); }
+  .showcase-note {
+    opacity: 0;
+    translate: 0 6px;
+    transition: opacity 0.4s var(--ease-premium), translate 0.4s var(--ease-premium);
+  }
+  .showcase-tile:hover .showcase-note,
+  .showcase-tile:focus-visible .showcase-note { opacity: 1; translate: 0 0; }
+}
+
 /* ---- Home trust cards: soft light background, light ring and lift on hover ----
  * Hover effects only on devices that can hover (no cost on touch screens); the moving light runs
  * only while hovered and only without a reduced-motion preference. */

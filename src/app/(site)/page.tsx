@@ -38,6 +38,7 @@ import { SplitWords, Word } from "@/components/public/split-words";
 import { HeroShowcase, type ShowcaseShot } from "@/components/public/home/hero-showcase";
 import { SyncDiagram } from "@/components/public/home/sync-diagram";
 import { PortfolioGrid } from "@/components/public/home/portfolio-grid";
+import { villaProjectNotes } from "@/lib/service-pages";
 import { TrustCards } from "@/components/public/home/trust-cards";
 import { ExperienceBand } from "@/components/public/home/experience-band";
 import { yearOf, todayIso } from "@/lib/dates";
@@ -303,18 +304,27 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 6. References: filterable portfolio */}
-      <section id="projeler" className="scroll-mt-24 py-20 sm:py-28">
+      {/* 6. References: editorial portfolio showcase */}
+      <section id="projeler" className="showcase-section scroll-mt-24 py-20 sm:py-28">
         <div className="container-page">
-          <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
-            <SectionHeading eyebrow="Referanslar" title="Kimlerle çalıştık?" text="Farklı sektörlerdeki markalar için geliştirdiğimiz dijital projelerden seçkiler." />
-            {projects.length > 0 ? (
-              <Link data-reveal href="/projeler" className="group inline-flex shrink-0 items-center gap-2 text-sm font-bold text-brand-600 hover:text-brand-700">Tüm projeler <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden /></Link>
-            ) : null}
+          <div className="grid items-end gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
+            <div data-reveal="story">
+              <p className="rv-eyebrow text-xs font-bold uppercase tracking-[0.18em] text-brand-600">Referanslar</p>
+              <h2 className="mt-4 font-display text-4xl font-extrabold leading-[1.02] tracking-tight text-navy-900 sm:text-6xl">
+                <SplitWords text="Kimlerle çalıştık?" />
+                {projects.length > 0 ? <sup className="ml-2 align-super font-display text-lg font-extrabold text-aqua-600 sm:text-2xl">({String(projects.length).padStart(2, "0")})</sup> : null}
+              </h2>
+            </div>
+            <div data-reveal className="lg:pb-2">
+              <p className="text-base leading-relaxed text-navy-600 sm:text-lg">Farklı sektörlerdeki markalar için geliştirdiğimiz dijital projelerden seçkiler.</p>
+              {projects.length > 0 ? (
+                <Link href="/projeler" className="group mt-4 inline-flex items-center gap-2 text-sm font-bold text-navy-900 hover:text-brand-600">Tüm projeler <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden /></Link>
+              ) : null}
+            </div>
           </div>
           {projects.length > 0 ? (
-            <div data-reveal className="mt-10">
-              <PortfolioGrid items={projects} />
+            <div data-reveal className="mt-12">
+              <PortfolioGrid items={projects.map((p) => ({ ...p, note: villaProjectNotes[p.slug] ?? p.summary }))} />
             </div>
           ) : (
             <div data-reveal className="mt-12 rounded-2xl border border-dashed border-navy-200 bg-white p-10 text-center">
