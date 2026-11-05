@@ -39,6 +39,7 @@ import { HeroShowcase, type ShowcaseShot } from "@/components/public/home/hero-s
 import { SyncDiagram } from "@/components/public/home/sync-diagram";
 import { PortfolioGrid } from "@/components/public/home/portfolio-grid";
 import { TrustCards } from "@/components/public/home/trust-cards";
+import { ExperienceBand } from "@/components/public/home/experience-band";
 import { yearOf, todayIso } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
@@ -146,6 +147,9 @@ export default async function HomePage() {
           <HeroShowcase front={heroFront} back={heroBack} />
         </div>
       </section>
+
+      {/* 1b. Villa sector experience band (separate section, right below the hero) */}
+      <ExperienceBand />
 
       {/* 2. Two equal category doors */}
       <section id="hizmetler" className="scroll-mt-24 py-20 sm:py-28">

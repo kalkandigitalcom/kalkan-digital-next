@@ -403,6 +403,20 @@
   }
 }
 
+/* ---- Home experience band: gradient year, slow ambient glow (motion only without reduced motion) ---- */
+.experience-year {
+  background: linear-gradient(120deg, #fff 10%, var(--color-aqua-300) 55%, var(--color-brand-300));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@keyframes k-experience-glow {
+  to { transform: translate3d(-6rem, 3rem, 0) scale(1.08); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .experience-glow { animation: k-experience-glow 14s ease-in-out infinite alternate; }
+}
+
 /* ---- Home trust cards: soft light background, light ring and lift on hover ----
  * Hover effects only on devices that can hover (no cost on touch screens); the moving light runs
  * only while hovered and only without a reduced-motion preference. */
