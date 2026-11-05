@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { Home, MonitorSmartphone } from "lucide-react";
 
 export interface ShowcaseShot {
@@ -20,8 +21,8 @@ export function HeroShowcase({ front, back }: { front: ShowcaseShot | null; back
       // Hidden on small screens: the category doors follow right below the hero there.
       <div className="intro-visual relative hidden lg:block">
         <div className="par-slow grid gap-4">
-          <CategoryTile href="#web-cozumler" icon={<MonitorSmartphone className="size-5" aria-hidden />} title="Web Tasarım ve Dijital Çözümler" items={["Kurumsal web tasarım", "Özel web yazılım", "E-ticaret", "Sunucu ve hosting", "Kurumsal e-posta", "Dijital reklam"]} />
-          <CategoryTile href="#villa-yazilimi" accent icon={<Home className="size-5" aria-hidden />} title="Villa Kiralama Yazılımları" items={["Villa kiralama sitesi", "Rezervasyon sistemi", "Airbnb ve Booking çift yönlü eşitleme", "Çoklu dil ve para birimi"]} />
+          <CategoryTile href="/hizmetler" icon={<MonitorSmartphone className="size-5" aria-hidden />} title="Web Tasarım ve Dijital Çözümler" items={["Kurumsal web tasarım", "Özel web yazılım", "E-ticaret", "Sunucu ve hosting", "Kurumsal e-posta", "Dijital reklam"]} />
+          <CategoryTile href="/villa-kiralama-yazilimi" accent icon={<Home className="size-5" aria-hidden />} title="Villa Kiralama Yazılımları" items={["Villa kiralama sitesi", "Rezervasyon sistemi", "Airbnb ve Booking çift yönlü eşitleme", "Çoklu dil ve para birimi"]} />
         </div>
       </div>
     );
@@ -66,7 +67,7 @@ function Shot({ shot, className = "", compact }: { shot: ShowcaseShot; className
 
 function CategoryTile({ href, icon, title, items, accent }: { href: string; icon: ReactNode; title: string; items: string[]; accent?: boolean }) {
   return (
-    <a href={href} className={`block rounded-2xl border p-6 shadow-card outline-none transition-[translate,box-shadow] duration-500 hover:-translate-y-0.5 hover:shadow-lift focus-visible:ring-2 focus-visible:ring-brand-500 ${accent ? "border-aqua-200 bg-aqua-50/60" : "border-navy-100 bg-white"}`}>
+    <Link href={href} className={`block rounded-2xl border p-6 shadow-card outline-none transition-[translate,box-shadow] duration-500 hover:-translate-y-0.5 hover:shadow-lift focus-visible:ring-2 focus-visible:ring-brand-500 ${accent ? "border-aqua-200 bg-aqua-50/60" : "border-navy-100 bg-white"}`}>
       <div className="flex items-center gap-3">
         <span className={`grid size-10 place-items-center rounded-xl ${accent ? "bg-aqua-500 text-white" : "bg-navy-900 text-white"}`}>{icon}</span>
         <p className="font-display text-base font-bold text-navy-900">{title}</p>
@@ -76,6 +77,6 @@ function CategoryTile({ href, icon, title, items, accent }: { href: string; icon
           <li key={i} className="rounded-full border border-navy-100 bg-white px-3 py-1 text-xs font-semibold text-navy-600">{i}</li>
         ))}
       </ul>
-    </a>
+    </Link>
   );
 }

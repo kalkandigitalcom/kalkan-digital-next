@@ -14,13 +14,13 @@ export const brandMessage = {
   text: "Uzmanlık alanımızın dışına çıkmadan, işletmelere gerçek değer katan çözümler geliştiriyoruz.",
 } as const;
 
-/** Category A: Web Tasarım ve Dijital Çözümler. `short` is the chip label used in compact lists. */
+/** Category A: Web Tasarım ve Dijital Çözümler. `short` is the chip label used in compact lists; `href` only where a page exists. */
 export const webServices = [
-  { icon: "MonitorSmartphone", title: "Kurumsal Web Tasarım", short: "Kurumsal web tasarım", text: "Markanızı doğru anlatan, hızlı ve SEO altyapılı web siteleri." },
-  { icon: "Code2", title: "Özel Web Yazılım", short: "Özel web yazılım", text: "Teklif, takip, rezervasyon ve raporlama için işletmenize özel sistemler." },
-  { icon: "Home", title: "Villa Kiralama Yazılımı", short: "Villa kiralama yazılımı", text: "Villa portföyü, rezervasyon yönetimi, müsaitlik takvimi ve Airbnb & Booking.com ile çift yönlü takvim eşitleme. Diğer platform entegrasyonları ihtiyaca göre geliştirilir.", villa: true },
-  { icon: "ShoppingCart", title: "E-Ticaret", short: "E-ticaret", text: "Ürünlerinizi online satmanız için mağaza, ürün ve sipariş yönetimi." },
-  { icon: "ServerCog", title: "Sunucu, Hosting ve Yazılım Altyapısı", short: "Sunucu ve hosting", text: "Güvenilir sunucu altyapısı, hosting, kurulum, optimizasyon, yedekleme ve teknik destek." },
+  { icon: "MonitorSmartphone", title: "Kurumsal Web Tasarım", href: "/hizmetler/kurumsal-web-tasarim", short: "Kurumsal web tasarım", text: "Markanızı doğru anlatan, hızlı ve SEO altyapılı web siteleri." },
+  { icon: "Code2", title: "Özel Web Yazılım", href: "/hizmetler/ozel-yazilim", short: "Özel web yazılım", text: "Teklif, takip, rezervasyon ve raporlama için işletmenize özel sistemler." },
+  { icon: "Home", title: "Villa Kiralama Yazılımı", href: "/villa-kiralama-yazilimi", short: "Villa kiralama yazılımı", text: "Villa portföyü, rezervasyon yönetimi, müsaitlik takvimi ve Airbnb & Booking.com ile çift yönlü takvim eşitleme. Diğer platform entegrasyonları ihtiyaca göre geliştirilir.", villa: true },
+  { icon: "ShoppingCart", title: "E-Ticaret", href: "/hizmetler/e-ticaret", short: "E-ticaret", text: "Ürünlerinizi online satmanız için mağaza, ürün ve sipariş yönetimi." },
+  { icon: "ServerCog", title: "Sunucu, Hosting ve Yazılım Altyapısı", href: "/hizmetler/hosting-teknik-destek", short: "Sunucu ve hosting", text: "Güvenilir sunucu altyapısı, hosting, kurulum, optimizasyon, yedekleme ve teknik destek." },
   { icon: "Mail", title: "Kurumsal E-Posta Kurulum ve Yönetimi", short: "Kurumsal e-posta", text: "Şirketinize özel kurumsal e-posta adresleri, kurulum, yapılandırma ve teknik yönetim." },
   { icon: "Megaphone", title: "Google Ads ve Dijital Reklam Yönetimi", short: "Google Ads", text: "Google Ads kampanyaları, reklam optimizasyonu ve performans takibi." },
   { icon: "Share2", title: "Sosyal Medya Yönetimi", short: "Sosyal medya", text: "Sosyal medya hesap yönetimi, içerik planlama ve dijital reklam çalışmaları." },

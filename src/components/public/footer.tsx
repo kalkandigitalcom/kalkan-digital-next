@@ -10,23 +10,41 @@ export function SiteFooter({ contact }: { contact: PublicContact }) {
   const year = new Date().getFullYear();
   return (
     <footer className="bg-navy-950 text-navy-200">
-      <div className="container-page grid gap-10 py-16 md:grid-cols-2 lg:grid-cols-4">
-        <div className="lg:col-span-2">
+      <div className="container-page grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-6">
+        <div className="sm:col-span-2">
           <Logo variant="onDark" size="lg" />
           <p className="mt-4 max-w-md text-sm leading-relaxed text-navy-300">
             Kalkan, Kaş merkezli dijital ajans. {site.foundedYear}&apos;den bu yana işletmeler için web siteleri, özel yazılımlar ve dijital büyüme çözümleri geliştiriyoruz.
           </p>
         </div>
-        <div>
-          <h2 className="font-display text-sm font-bold text-white">Sayfalar</h2>
+        <nav aria-label="Web hizmetleri">
+          <h2 className="font-display text-sm font-bold text-white">Web Tasarım ve Dijital Çözümler</h2>
           <ul className="mt-4 space-y-2.5 text-sm">
-            <li><Link className="hover:text-white" href="/#hizmetler">Hizmetler</Link></li>
+            <li><Link className="hover:text-white" href="/hizmetler/kurumsal-web-tasarim">Kurumsal web tasarım</Link></li>
+            <li><Link className="hover:text-white" href="/hizmetler/ozel-yazilim">Özel web yazılım</Link></li>
+            <li><Link className="hover:text-white" href="/hizmetler/wordpress">WordPress</Link></li>
+            <li><Link className="hover:text-white" href="/hizmetler/e-ticaret">E-ticaret</Link></li>
+            <li><Link className="hover:text-white" href="/hizmetler/hosting-teknik-destek">Hosting ve teknik destek</Link></li>
+            <li><Link className="hover:text-white" href="/hizmetler">Tüm hizmetler</Link></li>
+          </ul>
+        </nav>
+        <nav aria-label="Villa kiralama yazılımları">
+          <h2 className="font-display text-sm font-bold text-white">Villa Kiralama Yazılımları</h2>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            <li><Link className="hover:text-white" href="/villa-kiralama-yazilimi">Villa kiralama yazılımı</Link></li>
+            <li><Link className="hover:text-white" href="/villa-kiralama-yazilimi/villa-kiralama-sitesi">Villa kiralama sitesi</Link></li>
+            <li><Link className="hover:text-white" href="/villa-kiralama-yazilimi/rezervasyon-sistemi">Rezervasyon sistemi</Link></li>
+          </ul>
+        </nav>
+        <nav aria-label="Kurumsal">
+          <h2 className="font-display text-sm font-bold text-white">Kurumsal</h2>
+          <ul className="mt-4 space-y-2.5 text-sm">
             <li><Link className="hover:text-white" href="/projeler">Projeler</Link></li>
             <li><Link className="hover:text-white" href="/#surec">Çalışma süreci</Link></li>
             <li><Link className="hover:text-white" href="/iletisim">İletişim ve teklif</Link></li>
             <li><Link className="hover:text-white" href="/kvkk">KVKK aydınlatma metni</Link></li>
           </ul>
-        </div>
+        </nav>
         <div>
           <h2 className="font-display text-sm font-bold text-white">İletişim</h2>
           <ul className="mt-4 space-y-3 text-sm">

@@ -8,8 +8,8 @@ import { Logo } from "@/components/brand/logo";
 import { cn } from "@/lib/cn";
 
 const NAV = [
-  { href: "/#web-cozumler", label: "Web Tasarım & Yazılım" },
-  { href: "/#villa-yazilimi", label: "Villa Kiralama Yazılımı" },
+  { href: "/hizmetler", label: "Web Tasarım & Yazılım" },
+  { href: "/villa-kiralama-yazilimi", label: "Villa Kiralama Yazılımı" },
   { href: "/projeler", label: "Projeler" },
   { href: "/#surec", label: "Süreç" },
   { href: "/iletisim", label: "İletişim" },

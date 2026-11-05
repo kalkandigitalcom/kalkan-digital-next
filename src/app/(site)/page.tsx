@@ -156,7 +156,7 @@ export default async function HomePage() {
         <div className="container-page">
           <SectionHeading eyebrow="Ne yapıyoruz?" title="İki uzmanlık, tek ekip" />
           <div data-reveal-group="scale" className="mt-12 grid gap-5 lg:grid-cols-2">
-            <a href="#web-cozumler" className="group relative flex flex-col overflow-hidden rounded-3xl bg-navy-900 p-8 text-white outline-none transition-[translate,box-shadow] duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(11,31,58,0.8)] focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:p-10">
+            <Link href="/hizmetler" className="group relative flex flex-col overflow-hidden rounded-3xl bg-navy-900 p-8 text-white outline-none transition-[translate,box-shadow] duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(11,31,58,0.8)] focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:p-10">
               <span className="rv-icon grid size-12 place-items-center rounded-2xl bg-white/10 text-white"><MonitorSmartphone className="size-6" aria-hidden /></span>
               <h3 className="mt-8 font-display text-2xl font-extrabold tracking-tight sm:text-3xl">Web Tasarım ve Dijital Çözümler</h3>
               <p className="mt-4 max-w-lg leading-relaxed text-navy-200">Kurumsal web siteleri, özel web yazılımları ve e-ticaret; sunucu altyapısı, kurumsal e-posta ve dijital reklam desteğiyle birlikte. İşletmenize gereken dijital altyapıyı baştan sona kuruyoruz.</p>
@@ -164,8 +164,8 @@ export default async function HomePage() {
                 {webServiceChips.map((c) => <li key={c} className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-navy-100">{c}</li>)}
               </ul>
               <span className="mt-auto inline-flex items-center gap-2 pt-10 text-sm font-bold text-white">Hizmetleri inceleyin <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden /></span>
-            </a>
-            <a href="#villa-yazilimi" className="group relative flex flex-col overflow-hidden rounded-3xl border border-aqua-200 bg-aqua-50 p-8 text-navy-900 outline-none transition-[translate,box-shadow] duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(10,143,156,0.55)] focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:p-10">
+            </Link>
+            <Link href="/villa-kiralama-yazilimi" className="group relative flex flex-col overflow-hidden rounded-3xl border border-aqua-200 bg-aqua-50 p-8 text-navy-900 outline-none transition-[translate,box-shadow] duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(10,143,156,0.55)] focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 sm:p-10">
               <span className="rv-icon grid size-12 place-items-center rounded-2xl bg-aqua-600 text-white"><Home className="size-6" aria-hidden /></span>
               <h3 className="mt-8 font-display text-2xl font-extrabold tracking-tight sm:text-3xl">Villa Kiralama Yazılımları</h3>
               <p className="mt-4 max-w-lg leading-relaxed text-navy-600">Kendi markanıza ait villa kiralama sitesi: Airbnb ve Booking.com ile çift yönlü takvim eşitleme, çoklu dil ve para birimi, dönemsel fiyatlar ve rezervasyon yönetimi tek sistemde. Diğer rezervasyon platformlarıyla takvim entegrasyonu ihtiyacınıza göre projenize özel geliştirilir.</p>
@@ -175,7 +175,7 @@ export default async function HomePage() {
                 ))}
               </ul>
               <span className="mt-auto inline-flex items-center gap-2 pt-10 text-sm font-bold text-aqua-700">Villa yazılımını inceleyin <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden /></span>
-            </a>
+            </Link>
           </div>
 
           {/* 3. Trust cards */}
@@ -207,10 +207,10 @@ export default async function HomePage() {
                   </div>
                   <h3 className="mt-5 font-display text-base font-bold leading-snug text-navy-900">{s.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-navy-500">{s.text}</p>
-                  {villa ? (
-                    <a href="#villa-yazilimi" className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-bold text-aqua-700 hover:text-aqua-600">
-                      Ayrıntılar <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
-                    </a>
+                  {"href" in s ? (
+                    <Link href={s.href} className={`mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-bold ${villa ? "text-aqua-700 hover:text-aqua-600" : "text-brand-600 hover:text-brand-700"}`}>
+                      Ayrıntılar<span className="sr-only">: {s.title}</span> <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden />
+                    </Link>
                   ) : null}
                 </li>
               );
@@ -293,8 +293,11 @@ export default async function HomePage() {
             <a href={waVilla ?? "/iletisim#teklif"} {...(waVilla ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="motion-press inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-aqua-400 px-6 text-sm font-bold text-navy-950 hover:bg-aqua-300">
               Demo isteyin <ArrowRight className="size-4" aria-hidden />
             </a>
-            <Link href="/iletisim#teklif" className="motion-press inline-flex h-12 items-center justify-center rounded-xl border border-white/20 px-6 text-sm font-bold text-white hover:bg-white/10">
+            <Link href="/iletisim?hizmet=villa_rental_software#teklif" className="motion-press inline-flex h-12 items-center justify-center rounded-xl border border-white/20 px-6 text-sm font-bold text-white hover:bg-white/10">
               Villa siteniz için teklif alın
+            </Link>
+            <Link href="/villa-kiralama-yazilimi" className="group inline-flex h-12 items-center justify-center gap-2 px-2 text-sm font-bold text-aqua-300 hover:text-aqua-200">
+              Villa kiralama yazılımını inceleyin <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
             </Link>
           </div>
         </div>
