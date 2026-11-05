@@ -7,9 +7,8 @@ const HIGHLIGHTS = [
 ] as const;
 
 /**
- * Full-width band right below the hero: experience in the villa rental sector since 2019.
- * Deliberately scoped to the villa sector (the company itself dates from 2018, see the trust
- * cards) and backed by no client or project counts. Server component; the only motion is a slow
+ * Full-width band right below the hero: experience in the villa rental sector since 2018.
+ * Backed by no client or project counts. Server component; the only motion is a slow
  * ambient glow (CSS, off with reduced motion).
  */
 export function ExperienceBand() {
@@ -21,12 +20,12 @@ export function ExperienceBand() {
 
       <div className="container-page grid items-center gap-10 lg:grid-cols-[auto_1fr] lg:gap-20">
         <div data-reveal aria-hidden className="flex items-end gap-3 lg:flex-col lg:items-start lg:gap-1">
-          <span className="experience-year font-display text-[5.5rem] font-extrabold leading-[0.85] tracking-tight sm:text-[7rem] lg:text-[9rem]">2019</span>
-          <span className="pb-2 font-display text-xl font-bold text-navy-200 lg:pb-0 lg:pl-1.5">&apos;dan beri</span>
+          <span className="experience-year font-display text-[5.5rem] font-extrabold leading-[0.85] tracking-tight sm:text-[7rem] lg:text-[9rem]">2018</span>
+          <span className="pb-2 font-display text-xl font-bold text-navy-200 lg:pb-0 lg:pl-1.5">&apos;den beri</span>
         </div>
 
         <div data-reveal="story">
-          <p className="rv-eyebrow text-xs font-bold tracking-[0.18em] text-aqua-300">2019&apos;DAN BERİ VİLLA KİRALAMA SEKTÖRÜNDE</p>
+          <p className="rv-eyebrow text-xs font-bold tracking-[0.18em] text-aqua-300">2018&apos;DEN BERİ VİLLA KİRALAMA SEKTÖRÜNDE</p>
           <h2 id="deneyim-baslik" className="mt-4 max-w-2xl font-display text-3xl font-extrabold leading-[1.12] tracking-tight sm:text-[2.6rem]">
             Villa kiralama sektörünün içinden gelen deneyim.
           </h2>
